@@ -11,28 +11,20 @@ class EP {
     def partbank = event.getBank("REC::Particle")
     def calbank = event.getBank("REC::Calorimeter")
 
-    def findElectron = Electron.findElectron
-    def findProton = Proton.findProton
-
-/*
-    def findElectron = { pbank -> (0..<pbank.rows()).find{pbank.getInt('pid',it)==11 && pbank.getShort('status',it)<0} }
-    def findProton = { pbank -> (0..<pbank.rows()).findAll{pbank.getInt('pid',it)==2212}
-      .max{ind -> (new Vector3(*['px', 'py', 'pz'].collect{pbank.getFloat(it,ind)})).mag2()}
-    }
-*/
-
-    def eleind = findElectron(event)
+    def eleind = Electron.findElectron(event)
     if(eleind!=null) {
       //find proton with maximum energy
-      def proind = findProton(event)
+      def proind = Proton.findProton(event)
 
       def secs = [calbank.getShort('pindex')*.toInteger(), calbank.getByte('sector')].transpose().collectEntries()
 
       if(proind!=null) {
         def electron = new Particle(11, *['px', 'py', 'pz'].collect{partbank.getFloat(it, eleind)})
         def proton = new Particle(2212, *['px', 'py', 'pz'].collect{partbank.getFloat(it, proind)})
+
+        def status = partbank.getShort('status', proind)
         return [[particle:electron, pindex:eleind, sector:secs[eleind]],
-          [particle:proton, pindex:proind, sector:secs[proind]]]
+          [particle:proton, pindex:proind, status:status]]
       }
     }
     return [null, null]
