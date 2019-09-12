@@ -129,7 +129,9 @@ for(fname in args) {
 	    //println( sect  )
 	    //println( calb.getShort('pindex')*.toInteger().getClass() )
 	    
-	    
+	    //nice way to check range conditions
+	    //banks.part.getFloat('vz',0).with{println(it)}// < max_vz && it > min_vz}
+	    println((0..<banks.part.rows()).findAll{ banks.part.getFloat('vz',0).with{it < 10 && it > -10} })
 	    
 	    println(' testing no loop method ')
 	    println(test_no_loop)
