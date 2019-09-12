@@ -18,6 +18,12 @@ def electronPIDStrategies = [
 
 ]
 
+def electronPIDStrategies3 = [   
+    { banks , iele -> partb.getInt('pid',iele) == 11 },
+    { banks , iele -> partb.getInt('status',iele)<0 }
+
+]
+
 def electronPIDStrategies2 = [   
     { partb -> partb.getInt('pid').collect{ it==11 } },
     { partb -> partb.getInt('status').collect{ it<0 } }
@@ -29,6 +35,12 @@ def electronPIDStrategies2 = [
 //    electron.isElectronEBPIDCut
 //]
 
+reqBanks = [ 
+    part : "REC::Particle",
+    ec   : "REC::Calorimeter",
+    cc   : "REC::Cherenkov"
+]
+
 
 for(fname in args) {
     def reader = new HipoDataSource()
@@ -39,7 +51,14 @@ for(fname in args) {
     while(reader.hasEvent() && cc < 20) {
 	
 	def event = reader.getNextEvent()
-	if (event.hasBank("REC::Particle") && event.hasBank("REC::Calorimeter") && event.hasBank("REC::Cherenkov") {
+
+	def banks  = reqBanks.collect{name, bank -> [name, event.getBank(bank)] }.collectEntries()
+	def banks_pres = reqBanks.every{name, bank -> event.hasBank(bank) }
+	println(" are all banks present ")
+	println(banks_pres)
+
+	
+	if (event.hasBank("REC::Particle") && event.hasBank("REC::Calorimeter") && event.hasBank("REC::Cherenkov") ) {
 	    cc+=1
 	    // -method 1 we can directly loop over the banks here the same old way
 	    // -method 2 loop over objects in banks 
@@ -55,7 +74,9 @@ for(fname in args) {
 
  	    //findAll returns list of indices satisfying the closure
 	    //send to findResults
-	    def my_el_pid  =  (0..<partb.rows()).findAll{partb.getInt('pid',it) == 11 && partb.getInt('status',it)<0}.findResults{ ii -> println( ['px','py','pz'].collect{partb.getFloat(it,ii) } ) }
+	    //use each whn iterating over list
+	    //reserve findAll and findResults  find all elements matching critieria
+	    def my_el_pid  =  (0..<partb.rows()).each{partb.getInt('pid',it) == 11 && partb.getInt('status',it)<0}.each{ ii -> println( ['px','py','pz'].collect{partb.getFloat(it,ii) } ) }
 	    println( my_el_pid )
 
 	    println(" trying closure " )
@@ -69,47 +90,51 @@ for(fname in args) {
 	    def test_el_map = (0..<partb.rows()).collect{ ii -> [ii , electronPIDStrategies.collect{ el_test -> el_test(partb,ii) } ] }.collectEntries()
 	    println(test_el_map)
 	    println(test_el_map.getClass())
-
-
+	    
+	    
 	    def test_el_final = (0..<partb.rows()).findIndexValues{ electronPIDStrategies.every{ el_test -> el_test(partb,it) }  }
-
+	    
 	    //def test_el_final = (0..<partb.rows()).findIndexValues{ electronPIDStrategies.every{ el_test -> el_test(partb,it) }  }
 	    println(' test final list of indices ')
 	    println( test_el_final)
-
+	    
 
 	    // 3rd method - no loop	  
 	    def test_no_loop = electronPIDStrategies2.collect{ el_strat2 -> el_strat2(partb) }.transpose()
 	    
-
+	    
 	    //test how to get the sector from cal bank for correct particle
 	    partb.show()
 	    calb.show()
 	    def sect  = (0..<partb.rows()).each{ ii -> (calb.getShort('pindex')*.toInteger()).findResults{ println(it) == ii  } }//calb.getShort('pindex',ii) ) 
-	    //def pindex = 
-	    def nphe = [cherb.getShort('pindex'), cherb.getFloat('nphe')].transpose().collectEntries{pind,nph-> [(pin):nph] }
-
-	    def nphe = (0..<partb.rows()).find{cher.getByte('detector',it)==7}
-		.collectEntries{(cherb.guODetShort('pindex',it)):cherb.getFloat('energy',it) }
-	    nphe[0]>5
 
 
-	    def nphe  = (0..<partb.rows()).findResult{ chb.getInt('nphe') 
+	    // now lets try to get the nphe for events 
+	    //map nphe[pindex] = nphe
+	    def nphe = [chb.getShort('pindex'), chb.getFloat('nphe')].transpose().collectEntries{pind,nph-> [(pind.toInteger()):nph] }
+	    println( ' nphe ')
+	    println( nphe )
 
-	    println(' sector ' )
-	    println( sect  )
-	    println( calb.getShort('pindex')*.toInteger().getClass() )
-
+	    //can we get it without invoking map
+	    //put the index that you want the number of photoelect for.
+	    //def phe = (0..<banks.cc.rows()).find{ pindex -> banks.cc.getFloat("nphe", pindex) > 2 && banks.cc.getInt("pindex", pindex) == index }
+	    //	    def nphe = (0..<partb.rows()).find{cher.getByte('detector',it)==7}
+	    //		.collectEntries{(cherb.guODetShort('pindex',it)):cherb.getFloat('energy',it) }
+	    //	    nphe[0]>5
 	    
-
+	    
+	    //def nphe  = (0..<partb.rows()).findResult{ chb.getInt('nphe') 
+	    
+	    //println(' sector ' )
+	    //println( sect  )
+	    //println( calb.getShort('pindex')*.toInteger().getClass() )
+	    
+	    
+	    
 	    println(' testing no loop method ')
 	    println(test_no_loop)
-	    
-	    
-	    
-
-
-   	    //println( ' test object type ' )
+	    	    
+	    //println( ' test object type ' )
 	    //println( my_el_pid.getClass() )
 
 
