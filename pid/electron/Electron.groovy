@@ -45,6 +45,10 @@ class Electron {
 	    .find{pbank.getInt('pid',it)==11 && pbank.getShort('status',it)<0}
     }
 
+    def passElectronStatus = { bank, index -> 
+	return (bank.part.getInt('status',index)<0 )
+    }
+
     def passElectronEBPIDCut = {bank, index ->
 	return (bank.part.getInt('pid',index) == ebPID)
     }
@@ -102,11 +106,12 @@ class Electron {
 
 	def sec = (0..<bank.trck.rows()).find{bank.trck.getInt('pindex',it) == index && 
 					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.find{bank.trck.getByte('sector',it)}//.get(0)
-	
-	println( sec )
+
+	if( sec == null ) return false
+	println( " sector is $sec " )
 	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
 						   bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						   bank.traj.getByte('layer',it) == 12 )}.find{ ['x','y'].collect{ii-> bank.traj.getFloat(ii,it) } }
+						   bank.traj.getByte('layer',it) == 12 )}.with{ ['x','y'].collect{ ii -> bank.traj.getFloat(ii,it) } }
 	//if( (hit_pos.size() == 0) ){
 	 //   return false
 	    //hit_pos = hit_pos.get(0)

@@ -52,6 +52,7 @@ electron = new Electron();
 */
 
 def myElectronCutStrategies = [
+    electron.passElectronStatus,
     electron.passElectronChargeCut,
     electron.passElectronEBPIDCut,
     electron.passElectronNpheCut,
