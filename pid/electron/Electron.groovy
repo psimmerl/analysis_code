@@ -79,22 +79,28 @@ class Electron {
 
     //detector layer r1-12, r2-24, r3-36
     def passElectronDCR1(bank, index){
-	def hit_pos = (0..<banks.traj.rows()).find{(banks.traj.getInt('pindex',it) == index && 
-						    banks.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    banks.traj.getByte('layer',it) == 12 )}.collect{ ['cx','cy','cz'].collect{ii-> banks.traj.getFloat(ii,it) }} 
+	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
+						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
+						    bank.traj.getByte('layer',it) == 12 )}.collect{ ['cx','cy','cz'].collect{ii-> bank.traj.getFloat(ii,it) } }
+	if( hit_pos.size() > 0 ){
+	     hit_pos = hit_pos.get(0)
+	}
+	println(hit_pos)
 
 	//get the sector for the track as defined in the REC::Track bank
-	def sec = (0..<banks.trck.rows()).find{ banks.trck.getInt('pindex',it) == index && 
-						   banks.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{banks.trck.getByte('sector',it)} 
+	def sec = (0..<bank.trck.rows()).find{ bank.trck.getInt('pindex',it) == index && 
+					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{bank.trck.getByte('sector',it)}.get(0)
 
 	//x - 0
 	//y - 1 
 	//z - 2
+	println( 'sector in electron class ')
+	println(sec)
 	def ang = sec*60.0*Math.PI/180.0
-	def x1_rot = hit_pos[1] * sin(ang) + hit_pos[0] * cos(ang);
-	def y1_rot = hit_pos[1] * cos(ang) - hit_pos[0] * sin(ang);
+	def x1_rot = hit_pos.get(0) * Math.sin(ang) + hit_pos.get(0) * Math.cos(ang);
+	def y1_rot = hit_pos.get(1) * Math.cos(ang) - hit_pos.get(0) * Math.sin(ang);
 	
-	def slope = 1/tan(0.5*ang);
+	def slope = 1/Math.tan(0.5*ang);
 	def left  = (heightR1 - slope * y1_rot);
 	def right = (heightR1 + slope * y1_rot);
 	
@@ -104,22 +110,23 @@ class Electron {
     }
 
     def passElectronDCR2(bank, index){
-	def hit_pos = (0..<banks.traj.rows()).find{(banks.traj.getInt('pindex',it) == index && 
-						    banks.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    banks.traj.getByte('layer',it) == 24 )}.collect{ ['cx','cy','cz'].collect{ii-> banks.traj.getFloat(ii,it) }} 
+	//this returns list of list 
+	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
+						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
+						    bank.traj.getByte('layer',it) == 24 )}.collect{ ['cx','cy','cz'].collect{ii-> bank.traj.getFloat(ii,it) }}.get(0)
 
 	//get the sector for the track as defined in the REC::Track bank
-	def sec = (0..<banks.trck.rows()).find{ banks.trck.getInt('pindex',it) == index && 
-						   banks.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{banks.trck.getByte('sector',it)} 
+	def sec = (0..<bank.trck.rows()).find{ bank.trck.getInt('pindex',it) == index && 
+					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{bank.trck.getByte('sector',it)}.get(0)
 
 	//x - 0
 	//y - 1 
 	//z - 2
 	def ang = sec*60.0*Math.PI/180.0
-	def x1_rot = hit_pos[1] * sin(ang) + hit_pos[0] * cos(ang);
-	def y1_rot = hit_pos[1] * cos(ang) - hit_pos[0] * sin(ang);
+	def x1_rot = hit_pos.get(1) * Math.sin(ang) + hit_pos.get(0) * Math.cos(ang);
+	def y1_rot = hit_pos.get(0) * Math.cos(ang) - hit_pos.get(0) * Math.sin(ang);
 	
-	def slope = 1/tan(0.5*ang);
+	def slope = 1/Math.tan(0.5*ang);
 	def left  = (heightR2 - slope * y1_rot);
 	def right = (heightR2 + slope * y1_rot);
 	
@@ -129,22 +136,22 @@ class Electron {
     }
 
     def passElectronDCR3(bank, index){
-	def hit_pos = (0..<banks.traj.rows()).find{(banks.traj.getInt('pindex',it) == index && 
-						    banks.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    banks.traj.getByte('layer',it) == 36 )}.collect{ ['cx','cy','cz'].collect{ii-> banks.traj.getFloat(ii,it) }} 
+	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
+						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
+						    bank.traj.getByte('layer',it) == 36 )}.collect{ ['cx','cy','cz'].collect{ii-> bank.traj.getFloat(ii,it) }}.get(0)
 
 	//get the sector for the track as defined in the REC::Track bank
-	def sec = (0..<banks.trck.rows()).find{ banks.trck.getInt('pindex',it) == index && 
-					       banks.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{banks.trck.getByte('sector',it)} 
+	def sec = (0..<bank.trck.rows()).find{ bank.trck.getInt('pindex',it) == index && 
+					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{bank.trck.getByte('sector',it)}.get(0)
 
 	//x - 0
 	//y - 1 
 	//z - 2
 	def ang = sec*60.0*Math.PI/180.0
-	def x1_rot = hit_pos[1] * sin(ang) + hit_pos[0] * cos(ang);
-	def y1_rot = hit_pos[1] * cos(ang) - hit_pos[0] * sin(ang);
+	def x1_rot = hit_pos.get(1) * Math.sin(ang) + hit_pos.get(0) * Math.cos(ang);
+	def y1_rot = hit_pos.get(1) * Math.cos(ang) - hit_pos.get(0) * Math.sin(ang);
 	
-	def slope = 1/tan(0.5*ang);
+	def slope = 1/Math.tan(0.5*ang);
 	def left  = (heightR3 - slope * y1_rot);
 	def right = (heightR3 + slope * y1_rot);
 	

@@ -44,7 +44,10 @@ def myElectronCutStrategies = [
     { banks, index -> electron.passElectronNpheCut(banks,index) },
     { banks, index -> electron.passElectronVertexCut(banks,index) },
     { banks, index -> electron.passElectronPCALFiducialCut(banks,index) },
-    { banks, index -> electron.passElectronEIEOCut(banks,index) }
+    { banks, index -> electron.passElectronEIEOCut(banks,index) },
+    { banks, index -> electron.passElectronDCR1(banks,index) },
+    { banks, index -> electron.passElectronDCR2(banks,index) },
+    { banks, index -> electron.passElectronDCR3(banks,index) }
 ]
 
 reqBanks = [ 
@@ -72,7 +75,7 @@ for(fname in args) {
 	println(banks_pres)
 
 	
-	if (event.hasBank("REC::Particle") && event.hasBank("REC::Calorimeter") && event.hasBank("REC::Cherenkov") ) {
+	if (banks_pres) { //event.hasBank("REC::Particle") && event.hasBank("REC::Calorimeter") && event.hasBank("REC::Cherenkov") ) {
 	    cc+=1
 	    // -method 1 we can directly loop over the banks here the same old way
 	    // -method 2 loop over objects in banks 
