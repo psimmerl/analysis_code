@@ -33,6 +33,7 @@ class Electron {
     def radiusR3 = 49
 
 
+
     //sampling fraction cut
     //require functional form
     
@@ -62,6 +63,7 @@ class Electron {
     }
 
     def passElectronPCALFiducialCut(bank, index){		
+	// can probably be changed to a find like closure to avoid looping over all indices
 	return (0..<bank.ec.rows()).any{bank.ec.getByte('detector',it) == DetectorType.ECAL.getDetectorId() &&
 					bank.ec.getInt('pindex',it) == index &&
 					bank.ec.getFloat('lu',it).with{it < max_u && it > min_u} &&
@@ -81,10 +83,13 @@ class Electron {
     def passElectronDCR1(bank, index){
 	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
 						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    bank.traj.getByte('layer',it) == 12 )}.collect{ ['cx','cy','cz'].collect{ii-> bank.traj.getFloat(ii,it) } }
-	if( hit_pos.size() > 0 ){
-	     hit_pos = hit_pos.get(0)
+						    bank.traj.getByte('layer',it) == 12 )}.collect{ ['x','y','z'].collect{ii-> bank.traj.getFloat(ii,it) } }
+	if( (hit_pos.size() == 0) ){
+	    return false
+	    //hit_pos = hit_pos.get(0)
 	}
+	hit_pos=hit_pos.get(0)
+	println(" getting hit position elements in electorn class ")
 	println(hit_pos)
 
 	//get the sector for the track as defined in the REC::Track bank
@@ -97,15 +102,21 @@ class Electron {
 	println( 'sector in electron class ')
 	println(sec)
 	def ang = sec*60.0*Math.PI/180.0
-	def x1_rot = hit_pos.get(0) * Math.sin(ang) + hit_pos.get(0) * Math.cos(ang);
-	def y1_rot = hit_pos.get(1) * Math.cos(ang) - hit_pos.get(0) * Math.sin(ang);
+	def x1_rot = hit_pos.get(1) * Math.sin(ang) + hit_pos.get(0) * Math.cos(ang)
+	def y1_rot = hit_pos.get(1) * Math.cos(ang) - hit_pos.get(0) * Math.sin(ang)
+
+	println(" x1 rot $x1_rot  and y1rot $y1_rot")
+
 	
-	def slope = 1/Math.tan(0.5*ang);
-	def left  = (heightR1 - slope * y1_rot);
-	def right = (heightR1 + slope * y1_rot);
+	def slope = 1/Math.tan(0.5*60.0*Math.PI/180.0)
+	def left  = (heightR1 - slope * y1_rot)
+	def right = (heightR1 + slope * y1_rot)
 	
+	println("left $left and right $right ")
 	def radius2_DCr1 = radiusR1**2 - y1_rot**2;    // cut out the inner circle
-	if (x1_rot > left && x1_rot > right && x1_rot**2 > radius2_DCr1) return true;
+	println(" radius2 $radius2_DCr1" )
+	if (x1_rot > left && x1_rot > right ) {return true }// && x1_rot**2 > radius2_DCr1){ return true }
+	else{ return false }
 		
     }
 
@@ -113,7 +124,7 @@ class Electron {
 	//this returns list of list 
 	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
 						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    bank.traj.getByte('layer',it) == 24 )}.collect{ ['cx','cy','cz'].collect{ii-> bank.traj.getFloat(ii,it) }}.get(0)
+						    bank.traj.getByte('layer',it) == 24 )}.collect{ ['x','y','z'].collect{ii-> bank.traj.getFloat(ii,it) }}.get(0)
 
 	//get the sector for the track as defined in the REC::Track bank
 	def sec = (0..<bank.trck.rows()).find{ bank.trck.getInt('pindex',it) == index && 
@@ -138,7 +149,7 @@ class Electron {
     def passElectronDCR3(bank, index){
 	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
 						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    bank.traj.getByte('layer',it) == 36 )}.collect{ ['cx','cy','cz'].collect{ii-> bank.traj.getFloat(ii,it) }}.get(0)
+						    bank.traj.getByte('layer',it) == 36 )}.collect{ ['x','y','z'].collect{ii-> bank.traj.getFloat(ii,it) }}.get(0)
 
 	//get the sector for the track as defined in the REC::Track bank
 	def sec = (0..<bank.trck.rows()).find{ bank.trck.getInt('pindex',it) == index && 

@@ -46,8 +46,8 @@ def myElectronCutStrategies = [
     { banks, index -> electron.passElectronPCALFiducialCut(banks,index) },
     { banks, index -> electron.passElectronEIEOCut(banks,index) },
     { banks, index -> electron.passElectronDCR1(banks,index) },
-    { banks, index -> electron.passElectronDCR2(banks,index) },
-    { banks, index -> electron.passElectronDCR3(banks,index) }
+    //{ banks, index -> electron.passElectronDCR2(banks,index) },
+    //{ banks, index -> electron.passElectronDCR3(banks,index) }
 ]
 
 reqBanks = [ 
@@ -65,7 +65,7 @@ for(fname in args) {
     
     def cc = 0
     
-    while(reader.hasEvent() && cc < 20) {
+    while(reader.hasEvent() && cc < 200) {
 	
 	def event = reader.getNextEvent()
 
@@ -115,9 +115,13 @@ for(fname in args) {
 	    println(' test final list of indices ')
 	    println( test_el_final)
 	    
-
+	    banks.trck.show()
 	    // 3rd method - no loop	  
 	    def test_no_loop = electronPIDStrategies2.collect{ el_strat2 -> el_strat2(partb) }.transpose()
+
+	    println('testing find method ')
+	    println([1, 2, 3].find { (it > 2) }   )
+
 
 	    def my_el_cuts = (0..<partb.rows()).collect{ ii -> [ii, myElectronCutStrategies.collect{ el_test -> el_test(banks,ii) } ] }.collectEntries()
 	    println(' my electron cuts ' )
@@ -158,8 +162,6 @@ for(fname in args) {
 
 
 	    //testing any method 
-	    println('testing any method ')
-	    [1, 2, 3].any { println(it > 2) }   
 	    	    
 	    //println( ' test object type ' )
 	    //println( my_el_pid.getClass() )
