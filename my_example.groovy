@@ -38,7 +38,7 @@ electron = new Electron();
 //def myElectronCutStrategies = [
 //  {banks, index -> electron.passElectronEBPIDCut(banks,index)}
 //]
-def myElectronCutStrategies = [
+/*def myElectronCutStrategies = [
     { banks, index -> electron.passElectronChargeCut(banks,index) },
     { banks, index -> electron.passElectronEBPIDCut(banks,index) },
     { banks, index -> electron.passElectronNpheCut(banks,index) },
@@ -48,6 +48,17 @@ def myElectronCutStrategies = [
     { banks, index -> electron.passElectronDCR1(banks,index) },
     //{ banks, index -> electron.passElectronDCR2(banks,index) },
     //{ banks, index -> electron.passElectronDCR3(banks,index) }
+]
+*/
+
+def myElectronCutStrategies = [
+    electron.passElectronChargeCut,
+    electron.passElectronEBPIDCut,
+    electron.passElectronNpheCut,
+    electron.passElectronVertexCut,
+    electron.passElectronPCALFiducialCut,
+    electron.passElectronEIEOCut,
+    electron.passElectronDCR1
 ]
 
 reqBanks = [ 
@@ -119,8 +130,8 @@ for(fname in args) {
 	    // 3rd method - no loop	  
 	    def test_no_loop = electronPIDStrategies2.collect{ el_strat2 -> el_strat2(partb) }.transpose()
 
-	    println('testing find method ')
-	    println([1, 2, 3].find { (it > 2) }   )
+	    println('testing any method ')
+	    println([1, 2, 3].any{ (it > 2) }   )
 
 
 	    def my_el_cuts = (0..<partb.rows()).collect{ ii -> [ii, myElectronCutStrategies.collect{ el_test -> el_test(banks,ii) } ] }.collectEntries()

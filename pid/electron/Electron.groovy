@@ -45,24 +45,24 @@ class Electron {
 	    .find{pbank.getInt('pid',it)==11 && pbank.getShort('status',it)<0}
     }
 
-    def passElectronEBPIDCut(bank, index){
+    def passElectronEBPIDCut = {bank, index ->
 	return (bank.part.getInt('pid',index) == ebPID)
     }
 
-    def passElectronChargeCut(bank, index){
+    def passElectronChargeCut= {bank, index ->
 	return (bank.part.getInt('charge',index) < neg_charge)
     }
 
-    def passElectronNpheCut(bank, index){
+    def passElectronNpheCut= {bank, index ->
 	return (0..<bank.cc.rows()).any{bank.cc.getInt('pindex',it) == index &&
 					bank.cc.getFloat('nphe',it) > min_nphe}
     }
 
-    def passElectronVertexCut(bank, index){
+    def passElectronVertexCut= {bank, index ->
 	return (bank.part.getFloat('vz',index).with{it < max_vz && it > min_vz})
     }
 
-    def passElectronPCALFiducialCut(bank, index){		
+    def passElectronPCALFiducialCut= {bank, index ->		
 	// can probably be changed to a find like closure to avoid looping over all indices
 	return (0..<bank.ec.rows()).any{bank.ec.getByte('detector',it) == DetectorType.ECAL.getDetectorId() &&
 					bank.ec.getInt('pindex',it) == index &&
@@ -72,7 +72,7 @@ class Electron {
 	}	
     }
 
-    def passElectronEIEOCut(bank, index){
+    def passElectronEIEOCut= {bank, index ->
 	return (0..<bank.ec.rows()).any{(bank.ec.getByte('detector',it) == DetectorType.HTCC.getDetectorId() &&
 					 bank.ec.getFloat('energy',it) > min_pcal_dep &&
 					 bank.ec.getInt('pindex',it) == index)
@@ -80,46 +80,71 @@ class Electron {
     }
 
     //detector layer r1-12, r2-24, r3-36
-    def passElectronDCR1(bank, index){
+    //rotate hit position based on sector
+    def rotateDCHitPosition(hit,sec){
+	println(" in hit rotator x $hit[0] , y $hit[1] , sector $sec")
+	def ang = Math.toRadians(sec*60.0)
+	def x1_rot = hit[1] * Math.sin(ang) + hit[0] * Math.cos(ang)
+	def y1_rot = hit[1] * Math.cos(ang) - hit[0] * Math.sin(ang)
+	return [x1_rot,y1_rot]
+    }
+    
+    //define left right 
+    def borderDCHitPosition(y_rot){
+	def slope = 1/Math.tan(Math.toRadians(0.5*60.0))
+	def left  = (heightR1 - slope * y_rot)
+	def right = (heightR1 + slope * y_rot)
+	return [left, right]
+    }
+
+
+    def passElectronDCR1= {bank, index ->
+
+	def sec = (0..<bank.trck.rows()).find{bank.trck.getInt('pindex',it) == index && 
+					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.find{bank.trck.getByte('sector',it)}//.get(0)
+	
+	println( sec )
 	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
-						    bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
-						    bank.traj.getByte('layer',it) == 12 )}.collect{ ['x','y','z'].collect{ii-> bank.traj.getFloat(ii,it) } }
-	if( (hit_pos.size() == 0) ){
-	    return false
+						   bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
+						   bank.traj.getByte('layer',it) == 12 )}.find{ ['x','y'].collect{ii-> bank.traj.getFloat(ii,it) } }
+	//if( (hit_pos.size() == 0) ){
+	 //   return false
 	    //hit_pos = hit_pos.get(0)
-	}
-	hit_pos=hit_pos.get(0)
+	//}
+	//hit_pos=hit_pos.g
 	println(" getting hit position elements in electorn class ")
 	println(hit_pos)
 
 	//get the sector for the track as defined in the REC::Track bank
-	def sec = (0..<bank.trck.rows()).find{ bank.trck.getInt('pindex',it) == index && 
-					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId() }.collect{bank.trck.getByte('sector',it)}.get(0)
 
 	//x - 0
 	//y - 1 
 	//z - 2
 	println( 'sector in electron class ')
 	println(sec)
-	def ang = sec*60.0*Math.PI/180.0
+	def ang = Math.toRadians(sec*60.0)
 	def x1_rot = hit_pos.get(1) * Math.sin(ang) + hit_pos.get(0) * Math.cos(ang)
 	def y1_rot = hit_pos.get(1) * Math.cos(ang) - hit_pos.get(0) * Math.sin(ang)
 
 	println(" x1 rot $x1_rot  and y1rot $y1_rot")
+	def hit_rotate = rotateDCHitPosition(hit_pos,sec)
+	println(" testing hit position func" )
+	println(hit_rotate)
 
-	
-	def slope = 1/Math.tan(0.5*60.0*Math.PI/180.0)
+	def slope = 1/Math.tan(Math.toRadians(0.5*60.0))
 	def left  = (heightR1 - slope * y1_rot)
 	def right = (heightR1 + slope * y1_rot)
+	def left_right = borderDCHitPosition(y1_rot)
 	
+
 	println("left $left and right $right ")
 	def radius2_DCr1 = radiusR1**2 - y1_rot**2;    // cut out the inner circle
-	println(" radius2 $radius2_DCr1" )
-	if (x1_rot > left && x1_rot > right ) {return true }// && x1_rot**2 > radius2_DCr1){ return true }
-	else{ return false }
+	println(" radius2_dcr1 $radius2_DCr1" )
+	return (x1_rot > left && x1_rot > right)  // && x1_rot**2 > radius2_DCr1){ return true }
 		
     }
 
+    /*
     def passElectronDCR2(bank, index){
 	//this returns list of list 
 	def hit_pos = (0..<bank.traj.rows()).find{(bank.traj.getInt('pindex',it) == index && 
@@ -171,13 +196,11 @@ class Electron {
 		
     }
 
-
+     */
 
     //still need
     // SF cut
-    // DC R1 R2 R3 cut
-    // Require EC , HTCC, DC have sector > 0
-    
+    //requir htcc , ec, dc sector all same
 
     // using the static def approach in the main code we do not need to instantiate the electron class -> use Electron.isElectronEBPIDCut
     //    static def isElectronEBPIDCut(bank, iele){/
