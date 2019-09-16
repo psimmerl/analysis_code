@@ -10,7 +10,7 @@ class Electron {
     def min_vz = -12
     def max_vz = 9
     
-    def max_pcal_dep = 0.06
+    def min_pcal_dep = 0.06
 
     //calorimeter fiducial cut
     def min_u = 0
@@ -70,7 +70,7 @@ class Electron {
     }
 
     def passElectronEIEOCut= {bank, index ->
-	return (0..<bank.ec.rows()).any{(bank.ec.getByte('detector',it) == DetectorType.HTCC.getDetectorId() &&
+	return (0..<bank.ec.rows()).any{(bank.ec.getByte('detector',it) == DetectorType.ECAL.getDetectorId() &&
 					 bank.ec.getFloat('energy',it) > min_pcal_dep &&
 					 bank.ec.getShort('pindex',it) == index)
 	}
@@ -86,16 +86,16 @@ class Electron {
     }
     
     //define left right 
-    def borderDCHitPosition(y_rot){
+    def borderDCHitPosition(y_rot,height){
 	def slope = 1/Math.tan(Math.toRadians(0.5*sect_angle_coverage))
-	def left  = (heightR1 - slope * y_rot)
-	def right = (heightR1 + slope * y_rot)
+	def left  = (height - slope * y_rot)
+	def right = (height + slope * y_rot)
 	return [left, right]
     }
 
     def passElectronDCR1= {bank, index ->	
 	def sec = (0..<bank.trck.rows()).findResult{(bank.trck.getShort('pindex',it) == index && 
-					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId()) ? bank.trck.getByte('sector',it) : null }
+						     bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId()) ? bank.trck.getByte('sector',it) : null }
 
 	def hit_pos = (0..<bank.traj.rows()).findResult{(bank.traj.getShort('pindex',it) == index &&
 							 bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
@@ -107,11 +107,51 @@ class Electron {
 	//get the sector for the track as defined in the REC::Track bank
 	//x - 0 	//y - 1
 	def hit_rotate = rotateDCHitPosition(hit_pos,sec-1)
-	def left_right = borderDCHitPosition(hit_rotate.get(1))	
+	def left_right = borderDCHitPosition(hit_rotate.get(1),heightR1)	
 
 	return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1) )  // && x1_rot**2 > radius2_DCr1){ return true }
 	
     }
+
+    def passElectronDCR2= {bank, index ->	
+	def sec = (0..<bank.trck.rows()).findResult{(bank.trck.getShort('pindex',it) == index && 
+					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId()) ? bank.trck.getByte('sector',it) : null }
+
+	def hit_pos = (0..<bank.traj.rows()).findResult{(bank.traj.getShort('pindex',it) == index &&
+							 bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
+							 bank.traj.getByte('layer',it) == 24 )
+							? 'xy'.collect{ axis -> bank.traj.getFloat(axis,it) } : null }
+
+	if( sec == null || hit_pos == null ) return false	
+		
+	//get the sector for the track as defined in the REC::Track bank
+	//x - 0 	//y - 1
+	def hit_rotate = rotateDCHitPosition(hit_pos,sec-1)
+	def left_right = borderDCHitPosition(hit_rotate.get(1),heightR2)	
+
+	return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1) )  // && x1_rot**2 > radius2_DCr1){ return true }
+	
+    }
+
+    def passElectronDCR3= {bank, index ->	
+	def sec = (0..<bank.trck.rows()).findResult{(bank.trck.getShort('pindex',it) == index && 
+					      bank.trck.getByte('detector',it) == DetectorType.DC.getDetectorId()) ? bank.trck.getByte('sector',it) : null }
+
+	def hit_pos = (0..<bank.traj.rows()).findResult{(bank.traj.getShort('pindex',it) == index &&
+							 bank.traj.getByte('detector',it) == DetectorType.DC.getDetectorId() &&
+							 bank.traj.getByte('layer',it) == 36 )
+							? 'xy'.collect{ axis -> bank.traj.getFloat(axis,it) } : null }
+
+	if( sec == null || hit_pos == null ) return false	
+	
+	//get the sector for the track as defined in the REC::Track bank
+	//x - 0 	//y - 1
+	def hit_rotate = rotateDCHitPosition(hit_pos,sec-1)
+	def left_right = borderDCHitPosition(hit_rotate.get(1),heightR3)		
+	return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1) )  // && x1_rot**2 > radius2_DCr1){ return true }
+	
+    }
+
 
     // using the static def approach in the main code we do not need to instantiate the electron class -> use Electron.isElectronEBPIDCut
     //static def isElectronEBPIDCut(bank, iele){/
