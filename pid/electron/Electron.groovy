@@ -62,6 +62,7 @@ class Electron {
     def passElectronPCALFiducialCut= {bank, index ->		
 	// can probably be changed to a find like closure to avoid looping over all indices
 	return (0..<bank.ec.rows()).any{bank.ec.getByte('detector',it) == DetectorType.ECAL.getDetectorId() &&
+					bank.ec.getInt('layer',it) == 1 &&
 					bank.ec.getShort('pindex',it) == index &&
 					bank.ec.getFloat('lu',it).with{it < max_u && it > min_u} &&
 					bank.ec.getFloat('lv',it).with{it < max_v && it > min_v} &&
@@ -70,7 +71,9 @@ class Electron {
     }
 
     def passElectronEIEOCut= {bank, index ->
+	//treat pcal as 'first layer' and ecal as second. cut on the edep in first layer
 	return (0..<bank.ec.rows()).any{(bank.ec.getByte('detector',it) == DetectorType.ECAL.getDetectorId() &&
+					 bank.ec.getInt('layer',it) == 1 &&
 					 bank.ec.getFloat('energy',it) > min_pcal_dep &&
 					 bank.ec.getShort('pindex',it) == index)
 	}
