@@ -26,6 +26,10 @@ class Event {
     HashMap<Integer, Float> ecal_inner_energy, ecal_outer_energy, pcal_energy
     HashMap<Integer, Float> ecal_inner_time, ecal_outer_time, pcal_time
     HashMap<Integer, Float> ecal_inner_path, ecal_outer_path, pcal_path
+    HashMap<Integer, Float> ecal_inner_u, ecal_outer_u, pcal_u
+    HashMap<Integer, Float> ecal_inner_v, ecal_outer_v, pcal_v
+    HashMap<Integer, Float> ecal_inner_w, ecal_outer_w, pcal_w
+
 
     // REC::Scintillator
     HashMap<Integer, Short> tof_sector, tof_paddle
@@ -72,14 +76,23 @@ class Event {
         ecal_inner_energy = new HashMap<Integer, Float>()
         ecal_inner_time = new HashMap<Integer, Float>()
         ecal_inner_path = new HashMap<Integer, Float>()
+        ecal_inner_u = new HashMap<Integer, Float>()
+        ecal_inner_v = new HashMap<Integer, Float>()
+        ecal_inner_w = new HashMap<Integer, Float>()
         ecal_outer_sector = new HashMap<Integer, Short>()
         ecal_outer_energy = new HashMap<Integer, Float>()
         ecal_outer_time = new HashMap<Integer, Float>()
         ecal_outer_path = new HashMap<Integer, Float>()
+        ecal_outer_u = new HashMap<Integer, Float>()
+        ecal_outer_v = new HashMap<Integer, Float>()
+        ecal_outer_w = new HashMap<Integer, Float>()
         pcal_sector = new HashMap<Integer, Short>()
         pcal_energy = new HashMap<Integer, Float>()
         pcal_time = new HashMap<Integer, Float>()
         pcal_path = new HashMap<Integer, Float>()
+        pcal_u = new HashMap<Integer, Float>()
+        pcal_v = new HashMap<Integer, Float>()
+        pcal_w = new HashMap<Integer, Float>()
 
         // REC::Scintillator
         tof_time = new HashMap<Integer, Float>()

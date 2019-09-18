@@ -80,6 +80,9 @@ class EventConverter {
                     event.ecal_inner_time.put(pindex, cal.getFloat('time', index))
                     event.ecal_inner_path.put(pindex, cal.getFloat('path', index))
                     event.ecal_inner_sector.put(pindex, cal.getByte('sector', index))
+                    event.ecal_inner_u.put(pindex, cal.getFloat('lu', index))
+                    event.ecal_inner_v.put(pindex, cal.getFloat('lv', index))
+                    event.ecal_inner_w.put(pindex, cal.getFloat('lw', index))
                 }
 
                 else if (layer == 4){
@@ -88,6 +91,9 @@ class EventConverter {
                     event.ecal_outer_time.put(pindex, cal.getFloat('time', index))
                     event.ecal_outer_path.put(pindex, cal.getFloat('path', index))
                     event.ecal_outer_sector.put(pindex, cal.getByte('sector', index))
+                    event.ecal_outer_u.put(pindex, cal.getFloat('lu', index))
+                    event.ecal_outer_v.put(pindex, cal.getFloat('lv', index))
+                    event.ecal_outer_w.put(pindex, cal.getFloat('lw', index))
                 }
 
                 else if (layer == 7){
@@ -96,6 +102,9 @@ class EventConverter {
                     event.pcal_time.put(pindex, cal.getFloat('time', index))
                     event.pcal_path.put(pindex, cal.getFloat('path', index))
                     event.pcal_sector.put(pindex, cal.getByte('sector', index))
+                    event.pcal_u.put(pindex, cal.getFloat('lu', index))
+                    event.pcal_v.put(pindex, cal.getFloat('lv', index))
+                    event.pcal_w.put(pindex, cal.getFloat('lw', index))
                 }
             }
         }
