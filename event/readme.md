@@ -27,7 +27,7 @@ reader.open(filename)
 while(reader.hasEvent()){
     def dataEvent = reader.getNextEvent()
 
-    def event = Event()
+    def event = new Event()
     EventConverter.convertScalar(dataEvent, event)
     EventConverter.convertPart(dataEvent, event)
 
