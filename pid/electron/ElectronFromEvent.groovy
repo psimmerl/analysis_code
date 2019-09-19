@@ -88,11 +88,13 @@ class ElectronFromEvent {
 		if (event.dc1_status.contains(index)){
 			def sec = event.dc_sector[index]
 			def hit = event.dc1.get(index).find{ hit -> hit.layer == 12}
-			def hit_rotate = rotateDCHitPosition([hit.x, hit.y], sec-1)
-			def left_right = borderDCHitPosition(hit_rotate.get(1), heightR1)
-
-			// from lower line: && x1_rot**2 > radius2_DCr1){ return true }
-			return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1))
+            if (hit){
+                def hit_rotate = rotateDCHitPosition([hit.x, hit.y], sec-1)
+                def left_right = borderDCHitPosition(hit_rotate.get(1), heightR1)
+                return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1))
+            } else {
+                return false
+            }
 		}
 		return false
 	}
@@ -101,11 +103,13 @@ class ElectronFromEvent {
 		if (event.dc2_status.contains(index)){
 			def sec = event.dc_sector[index]
 			def hit = event.dc2.get(index).find{ hit -> hit.layer == 24}
-			def hit_rotate = rotateDCHitPosition([hit.x, hit.y], sec-1)
-			def left_right = borderDCHitPosition(hit_rotate.get(1), heightR2)
-
-			// from lower line: && x1_rot**2 > radius2_DCr1){ return true }
-			return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1))
+            if (hit){
+                def hit_rotate = rotateDCHitPosition([hit.x, hit.y], sec-1)
+                def left_right = borderDCHitPosition(hit_rotate.get(1), heightR2)
+                return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1))
+            } else {
+                return false
+            }
 		}
 		return false
 	}
@@ -114,11 +118,15 @@ class ElectronFromEvent {
 		if (event.dc3_status.contains(index)){
 			def sec = event.dc_sector[index]
 			def hit = event.dc3.get(index).find{ hit -> hit.layer == 36}
-			def hit_rotate = rotateDCHitPosition([hit.x, hit.y], sec-1)
-			def left_right = borderDCHitPosition(hit_rotate.get(1), heightR3)
+			if (hit) {
+                def hit_rotate = rotateDCHitPosition([hit.x, hit.y], sec-1)
+                def left_right = borderDCHitPosition(hit_rotate.get(1), heightR3)
 
-			// from lower line: && x1_rot**2 > radius2_DCr1){ return true }
-			return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1))
+                // from lower line: && x1_rot**2 > radius2_DCr1){ return true }
+                return (hit_rotate.get(0) > left_right.get(0) && hit_rotate.get(0) > left_right.get(1))
+            } else {
+                return false
+            }
 		}
 		return false
 	}
