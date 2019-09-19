@@ -48,6 +48,8 @@ class EventConverter {
                 event.charge.put(index, part.getByte('charge', index))
                 event.pid.put(index, part.getInt('pid', index))
             }
+        } else {
+            event.npart = 0
         }
     }
 
@@ -116,17 +118,20 @@ class EventConverter {
             (0 ..< tof.rows()).each{ index ->
                 def pindex = tof.getShort('pindex', index).toInteger()
                 def layer = tof.getByte('layer', index)
+                def detector = tof.getByte('detector', index)
 
                 // Add some logic to determine the paddle and the kind of
                 // detector which was hit.
-                event.tof_status.add(pindex)
-                event.tof_sector.put(pindex, tof.getByte('sector', index))
+                if (detector == DetectorType.FTOF.getDetectorId()){
+                    event.tof_status.add(pindex)
+                    event.tof_sector.put(pindex, tof.getByte('sector', index))
 
-                // Check this for accuracy.  I'm not sure on paddle here.
-                event.tof_paddle.put(pindex, tof.getShort('component', index))
-                event.tof_time.put(pindex, tof.getFloat('time', index))
-                event.tof_path.put(pindex, tof.getFloat('path', index))
-                event.tof_energy.put(pindex, tof.getFloat('energy', index))
+                    // Check this for accuracy.  I'm not sure on paddle here.
+                    event.tof_paddle.put(pindex, tof.getShort('component', index))
+                    event.tof_time.put(pindex, tof.getFloat('time', index))
+                    event.tof_path.put(pindex, tof.getFloat('path', index))
+                    event.tof_energy.put(pindex, tof.getFloat('energy', index))
+                }
             }
         }
     }
