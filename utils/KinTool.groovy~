@@ -1,0 +1,28 @@
+package utils
+import org.jlab.clas.physics.LorentzVector
+
+
+class KinTool{
+
+    //move somplace else
+    static def PROTONMASS = 0.938272
+
+    static def Q2(){
+	return 0
+    }
+
+    static def delta_meas_energy( Double beam,  LorentzVector measured_el ){
+	def calc_e = beam/(1+ (beam/PROTONMASS)*(1-Math.cos(measured_el.theta())) );
+	return (calc_e  - measured_el.e() )
+    }
+
+    static def delta_meas_theta( Double beam,  LorentzVector measured_el ){
+	def calc_theta = Math.toDegrees(Math.acos( 1 + (PROTONMASS/beam)*( 1 - beam/measured_el.e()) ))
+	return Math.toDegrees((calc_theta  - measured_el.theta() ))
+    }
+
+    
+
+}
+
+
