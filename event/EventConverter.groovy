@@ -38,7 +38,7 @@ class EventConverter {
                 event.py.put(index, part.getFloat('py', index))
                 event.pz.put(index, part.getFloat('pz', index))
                 event.p.put(index,
-                        Math.sqrt(event.px.get(index)**2 + event.py.get(index)**2 + event.py.get(index)**2))
+                        Math.sqrt(event.px.get(index)**2 + event.py.get(index)**2 + event.pz.get(index)**2))
                 event.vx.put(index, part.getFloat('vx', index))
                 event.vy.put(index, part.getFloat('vy', index))
                 event.vz.put(index, part.getFloat('vz', index))
