@@ -1,0 +1,18 @@
+from ROOT import TCanvas, TPad, TFormula, TF1, TPaveLabel, TH1F, TFile
+from ROOT import TGraphErrors
+from ROOT import gROOT, gBenchmark, gStyle, gPad
+from array import array
+import math
+
+#plot the final kinematic distributions for the particles in exclusive phi production
+
+fin = TFile("../../analysis_out_skim4_rgaf18_final.root","read")
+
+hw = fin.Get("W")
+hmissemm2 = fin.Get("missemm2")
+hphim = fin.Get("phim")
+hmm2phim = fin.Get("missephim")
+hmismm2phim = fin.Get("mismm2phim")
+hmissmm2 = fin.Get("missmm2")
+
+
