@@ -13,6 +13,7 @@ class EventConverter {
         convertCalorimeter(dataEvent,event)
         convertTimeOfFlight(dataEvent,event)
         convertDriftChamber(dataEvent,event)
+        convertMC(dataEvent,event)
         return event
     }
 
@@ -200,6 +201,31 @@ class EventConverter {
                 event.dc_chi2.put(pindex, track.getFloat('chi2', index))
                 event.dc_ndf.put(pindex, track.getShort('NDF', index))
             }
+        }
+    }
+
+    static def convertMC(HipoDataEvent dataEvent, Event event){
+        if (dataEvent.hasBank("MC::Particle")){
+            def mc = dataEvent.getBank("MC::Particle")
+            event.mc_status = true
+            event.mc_npart = mc.rows()
+
+            (0 ..< mc.rows()).each{ index ->
+                event.mc_pid.put(index, mc.getInt('pid', index))
+                event.mc_px.put(index, mc.getFloat('px', index))
+                event.mc_py.put(index, mc.getFloat('py', index))
+                event.mc_pz.put(index, mc.getFloat('pz', index))
+                event.mc_p.put(index,
+                        Math.sqrt(mc.getFloat('px',index)**2 + mc.getFloat('py',index)**2 + mc.getFloat('pz',index)**2))
+                event.mc_vx.put(index, mc.getFloat('vx', index))
+                event.mc_vy.put(index, mc.getFloat('vy', index))
+                event.mc_vz.put(index, mc.getFloat('vz', index))
+                event.mc_vt.put(index, mc.getFloat('vt', index))
+            }
+
+        } else {
+            event.mc_status = false
+            event.mc_npart = 0
         }
     }
 }
