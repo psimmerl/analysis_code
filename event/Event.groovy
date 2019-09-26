@@ -33,7 +33,7 @@ class Event {
 
 
     // REC::Scintillator
-    HashMap<Integer, Short> tof_sector, tof_paddle
+    HashMap<Integer, Short> tof_sector, tof_paddle, tof_layer
     HashMap<Integer, Float> tof_time, tof_path, tof_energy
 
     // REC::Track and REC::Traj
@@ -104,6 +104,7 @@ class Event {
         tof_energy = new HashMap<Integer, Float>()
         tof_paddle = new HashMap<Integer, Short>()
         tof_sector = new HashMap<Integer, Short>()
+        tof_layer = new HashMap<Integer, Short>()
 
         // REC::Traj and REC::Track
         dc1 = new HashMap<Integer, ArrayList<DCHit>>()
