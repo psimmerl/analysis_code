@@ -126,6 +126,7 @@ class EventConverter {
                 if (detector == DetectorType.FTOF.getDetectorId()){
                     event.tof_status.add(pindex)
                     event.tof_sector.put(pindex, tof.getByte('sector', index))
+                    event.tof_layer.put(pindex, tof.getByte('layer', index))
 
                     // Check this for accuracy.  I'm not sure on paddle here.
                     event.tof_paddle.put(pindex, tof.getShort('component', index))
