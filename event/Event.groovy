@@ -5,9 +5,10 @@ import event.DCHit
 class Event {
 
     // Scalars
-    Short npart, helicity
+    Short npart, mc_npart, helicity
     Long event_number
     Float start_time, rf_time
+    Boolean mc_status
 
     // All detector status variables collected together
     HashSet<Integer> cherenkov_status, ecal_inner_status, ecal_outer_status, pcal_status
@@ -32,7 +33,7 @@ class Event {
 
 
     // REC::Scintillator
-    HashMap<Integer, Short> tof_sector, tof_paddle
+    HashMap<Integer, Short> tof_sector, tof_paddle, tof_layer
     HashMap<Integer, Float> tof_time, tof_path, tof_energy
 
     // REC::Track and REC::Traj
@@ -40,8 +41,11 @@ class Event {
     HashMap<Integer, Float> dc_chi2
     HashMap<Integer, Short> dc_sector, dc_ndf
 
-    def Event(){
+    // MC::Particle
+    HashMap<Integer, Short> mc_pid
+    HashMap<Integer, Float> mc_px, mc_py, mc_pz, mc_p, mc_vx, mc_vy, mc_vz, mc_vt
 
+    def Event(){
         cherenkov_status = new HashSet<Integer>()
         ecal_inner_status = new HashSet<Integer>()
         ecal_outer_status = new HashSet<Integer>()
@@ -100,6 +104,7 @@ class Event {
         tof_energy = new HashMap<Integer, Float>()
         tof_paddle = new HashMap<Integer, Short>()
         tof_sector = new HashMap<Integer, Short>()
+        tof_layer = new HashMap<Integer, Short>()
 
         // REC::Traj and REC::Track
         dc1 = new HashMap<Integer, ArrayList<DCHit>>()
@@ -108,6 +113,16 @@ class Event {
         dc_sector = new HashMap<Integer, Short>()
         dc_ndf = new HashMap<Integer, Short>()
         dc_chi2 = new HashMap<Integer, Float>()
+
+        mc_pid = new HashMap<Integer, Short>()
+        mc_px = new HashMap<Integer, Float>()
+        mc_py = new HashMap<Integer, Float>()
+        mc_pz = new HashMap<Integer, Float>()
+        mc_p = new HashMap<Integer, Float>()
+        mc_vx = new HashMap<Integer, Float>()
+        mc_vy = new HashMap<Integer, Float>()
+        mc_vz = new HashMap<Integer, Float>()
+        mc_vt = new HashMap<Integer, Float>()
     }
 }
 
