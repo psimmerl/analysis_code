@@ -118,7 +118,6 @@ class EventConverter {
             def tof = dataEvent.getBank("REC::Scintillator")
             (0 ..< tof.rows()).each{ index ->
                 def pindex = tof.getShort('pindex', index).toInteger()
-                def layer = tof.getByte('layer', index)
                 def detector = tof.getByte('detector', index)
 
                 // Add some logic to determine the paddle and the kind of
@@ -134,6 +133,16 @@ class EventConverter {
                     event.tof_path.put(pindex, tof.getFloat('path', index))
                     event.tof_energy.put(pindex, tof.getFloat('energy', index))
                 }
+                else if (detector == DetectorType.CTOF.getDetectorId()){
+                    event.ctof_status.add(pindex)
+                    event.ctof_sector.put(pindex, tof.getByte('sector', index))
+                    event.ctof_layer.put(pindex, tof.getByte('layer', index))
+                    event.ctof_component.put(pindex, tof.getShort('component', index))
+                    event.ctof_time.put(pindex, tof.getFloat("time", index))
+                    event.ctof_path.put(pindex, tof.getFloat("path", index))
+                    event.ctof_energy.put(pindex, tof.getFloat("energy", index))
+                }
+
             }
         }
     }
