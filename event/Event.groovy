@@ -11,7 +11,7 @@ class Event {
     Boolean mc_status
 
     // All detector status variables collected together
-    HashSet<Integer> cherenkov_status, ecal_inner_status, ecal_outer_status, pcal_status
+    HashSet<Integer> cherenkov_status, ecal_inner_status, ecal_outer_status, pcal_status, ctof_status
     HashSet<Integer> dc1_status, dc2_status, dc3_status, tof_status
 
     // REC::Cherenkov
@@ -36,6 +36,9 @@ class Event {
     HashMap<Integer, Short> tof_sector, tof_paddle, tof_layer
     HashMap<Integer, Float> tof_time, tof_path, tof_energy
 
+    HashMap<Integer, Short> ctof_sector, ctof_component, ctof_layer
+    HashMap<Integer, Float> ctof_time, ctof_energy, ctof_path
+
     // REC::Track and REC::Traj
     HashMap<Integer, ArrayList<DCHit>> dc1, dc2, dc3
     HashMap<Integer, Float> dc_chi2
@@ -54,6 +57,7 @@ class Event {
         dc2_status = new HashSet<Integer>()
         dc3_status = new HashSet<Integer>()
         tof_status = new HashSet<Integer>()
+        ctof_status = new HashSet<Integer>()
 
         // REC::Particle
         px = new HashMap<Integer, Float>()
@@ -105,6 +109,12 @@ class Event {
         tof_paddle = new HashMap<Integer, Short>()
         tof_sector = new HashMap<Integer, Short>()
         tof_layer = new HashMap<Integer, Short>()
+        ctof_sector = new HashMap<Integer, Short>()
+        ctof_component = new HashMap<Integer, Short>()
+        ctof_layer = new HashMap<Integer, Short>()
+        ctof_time = new HashMap<Integer, Float>()
+        ctof_path = new HashMap<Integer, Float>()
+        ctof_energy = new HashMap<Integer, Float>()
 
         // REC::Traj and REC::Track
         dc1 = new HashMap<Integer, ArrayList<DCHit>>()
