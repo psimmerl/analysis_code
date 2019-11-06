@@ -2,6 +2,8 @@ package event
 import org.jlab.detector.base.DetectorType
 import org.jlab.io.hipo.HipoDataEvent
 import event.Event
+import event.DCHit
+import event.FtofHit
 
 class EventConverter {
 
@@ -123,7 +125,8 @@ class EventConverter {
                 // Add some logic to determine the paddle and the kind of
                 // detector which was hit.
                 if (detector == DetectorType.FTOF.getDetectorId()){
-                    event.tof_status.add(pindex)
+
+                    /* Outdated by FtofHit
                     event.tof_sector.put(pindex, tof.getByte('sector', index))
                     event.tof_layer.put(pindex, tof.getByte('layer', index))
 
@@ -132,7 +135,26 @@ class EventConverter {
                     event.tof_time.put(pindex, tof.getFloat('time', index))
                     event.tof_path.put(pindex, tof.getFloat('path', index))
                     event.tof_energy.put(pindex, tof.getFloat('energy', index))
+                    */
+
+                    def hit = new FtofHit(
+                            sector: tof.getByte('sector', index),
+                            layer: tof.getByte('layer', index),
+                            paddle: tof.getShort('component', index),
+                            time: tof.getFloat('time', index),
+                            energy: tof.getFloat('energy', index),
+                            path: tof.getFloat('path', index)
+                    )
+                    if (event.tof_status.contains(pindex)){
+                        event.tof.get(pindex).add(hit)
+                    }
+                    else {
+                        event.tof_status.add(pindex)
+                        event.tof.put(pindex, new ArrayList<FtofHit>())
+                        event.tof.get(pindex).add(hit)
+                    }
                 }
+
                 else if (detector == DetectorType.CTOF.getDetectorId()){
                     event.ctof_status.add(pindex)
                     event.ctof_sector.put(pindex, tof.getByte('sector', index))
