@@ -1,6 +1,7 @@
 package event
 import org.jlab.detector.base.DetectorType
 import event.DCHit
+import event.FtofHit
 
 class Event {
 
@@ -35,6 +36,7 @@ class Event {
     // REC::Scintillator
     HashMap<Integer, Short> tof_sector, tof_paddle, tof_layer
     HashMap<Integer, Float> tof_time, tof_path, tof_energy
+    HashMap<Integer, ArrayList<FtofHit>> tof
 
     HashMap<Integer, Short> ctof_sector, ctof_component, ctof_layer
     HashMap<Integer, Float> ctof_time, ctof_energy, ctof_path
@@ -103,6 +105,7 @@ class Event {
         pcal_w = new HashMap<Integer, Float>()
 
         // REC::Scintillator
+        tof = new HashMap<Integer, ArrayList<FtofHit>>()
         tof_time = new HashMap<Integer, Float>()
         tof_path = new HashMap<Integer, Float>()
         tof_energy = new HashMap<Integer, Float>()
