@@ -79,7 +79,7 @@ class EventConverter {
                 def pindex = cal.getShort('pindex', index).toInteger()
                 def layer = cal.getByte('layer', index)
 
-                if (layer == 1){
+                if (layer == 4){
                     event.ecal_inner_status.add(pindex)
                     event.ecal_inner_energy.put(pindex, cal.getFloat('energy', index))
                     event.ecal_inner_time.put(pindex, cal.getFloat('time', index))
@@ -90,7 +90,7 @@ class EventConverter {
                     event.ecal_inner_w.put(pindex, cal.getFloat('lw', index))
                 }
 
-                else if (layer == 4){
+                else if (layer == 7){
                     event.ecal_outer_status.add(pindex)
                     event.ecal_outer_energy.put(pindex, cal.getFloat('energy', index))
                     event.ecal_outer_time.put(pindex, cal.getFloat('time', index))
@@ -101,7 +101,7 @@ class EventConverter {
                     event.ecal_outer_w.put(pindex, cal.getFloat('lw', index))
                 }
 
-                else if (layer == 7){
+                else if (layer == 1){
                     event.pcal_status.add(pindex)
                     event.pcal_energy.put(pindex, cal.getFloat('energy', index))
                     event.pcal_time.put(pindex, cal.getFloat('time', index))
