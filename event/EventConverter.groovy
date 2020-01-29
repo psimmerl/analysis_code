@@ -11,6 +11,7 @@ class EventConverter {
         def event = new Event()
         convertScalars(dataEvent,event)
         convertPart(dataEvent,event)
+	convertCovMat(dataEvent,event)
         convertCherenkov(dataEvent,event)
         convertCalorimeter(dataEvent,event)
         convertTimeOfFlight(dataEvent,event)
@@ -47,12 +48,40 @@ class EventConverter {
                 event.vz.put(index, part.getFloat('vz', index))
                 event.vt.put(index, part.getFloat('vt', index))
                 event.beta.put(index, part.getFloat('beta', index))
+                event.chi2pid.put(index, part.getFloat('chi2pid', index))
                 event.status.put(index, part.getShort('status', index))
                 event.charge.put(index, part.getByte('charge', index))
                 event.pid.put(index, part.getInt('pid', index))
             }
         } else {
             event.npart = 0
+        }
+    }
+
+    static def convertCovMat(HipoDataEvent dataEvent, Event event){
+        if (dataEvent.hasBank("REC::CovMat")){
+            def cov = dataEvent.getBank("REC::CovMat")
+            (0 ..< cov.rows()).each{ index ->
+                def pindex = cov.getShort('pindex',index).toInteger()		
+		def cmatrix = new CovarianceMatrix()
+		cmatrix.c11 = cov.getFloat('C11',index)
+		cmatrix.c12 = cov.getFloat('C12',index)
+		cmatrix.c13 = cov.getFloat('C13',index)
+		cmatrix.c14 = cov.getFloat('C14',index)
+		cmatrix.c15 = cov.getFloat('C15',index)
+		cmatrix.c22 = cov.getFloat('C22',index)
+		cmatrix.c23 = cov.getFloat('C23',index)
+		cmatrix.c24 = cov.getFloat('C24',index)
+		cmatrix.c25 = cov.getFloat('C25',index)
+		cmatrix.c33 = cov.getFloat('C33',index)
+		cmatrix.c34 = cov.getFloat('C34',index)
+		cmatrix.c35 = cov.getFloat('C35',index)
+		cmatrix.c44 = cov.getFloat('C44',index)
+		cmatrix.c45 = cov.getFloat('C45',index)
+		cmatrix.c55 = cov.getFloat('C55',index)
+		event.covariance_status.add(pindex)
+		event.cov_mat.put(pindex, cmatrix)
+            }
         }
     }
 
