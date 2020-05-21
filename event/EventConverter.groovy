@@ -112,6 +112,12 @@ class EventConverter {
             (0 ..< cal.rows()).each{ index ->
                 def pindex = cal.getShort('pindex', index).toInteger()
                 def layer = cal.getByte('layer', index)
+                def hit = new ECHit(
+                        x: cal.getFloat('x', index),
+                        y: cal.getFloat('y', index),
+                        z: cal.getFloat('z', index),
+                        layer : cal.getByte('layer', index)
+                )
 
                 if (layer == 4){
                     event.ecal_inner_status.add(pindex)
@@ -122,6 +128,7 @@ class EventConverter {
                     event.ecal_inner_u.put(pindex, cal.getFloat('lu', index))
                     event.ecal_inner_v.put(pindex, cal.getFloat('lv', index))
                     event.ecal_inner_w.put(pindex, cal.getFloat('lw', index))
+                    event.ecal_inner.put(pindex, hit)
                 }
 
                 else if (layer == 7){
@@ -133,6 +140,7 @@ class EventConverter {
                     event.ecal_outer_u.put(pindex, cal.getFloat('lu', index))
                     event.ecal_outer_v.put(pindex, cal.getFloat('lv', index))
                     event.ecal_outer_w.put(pindex, cal.getFloat('lw', index))
+                    event.ecal_outer.put(pindex, hit)
                 }
 
                 else if (layer == 1){
@@ -144,6 +152,7 @@ class EventConverter {
                     event.pcal_u.put(pindex, cal.getFloat('lu', index))
                     event.pcal_v.put(pindex, cal.getFloat('lv', index))
                     event.pcal_w.put(pindex, cal.getFloat('lw', index))
+                    event.pcal.put(pindex, hit)
                 }
             }
         }
@@ -208,7 +217,7 @@ class EventConverter {
         if (dataEvent.hasBank("REC::Traj")){
             def traj = dataEvent.getBank("REC::Traj")
 
-            (0 ..< traj.rows()).findAll{
+            (0 ..< traj.rows()).findAll{index->
                 def detector = traj.getByte('detector', index)
                 detector == DetectorType.DC.getDetectorId()
             }.collect{ index ->
