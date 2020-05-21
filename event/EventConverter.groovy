@@ -4,6 +4,7 @@ import org.jlab.io.hipo.HipoDataEvent
 import event.Event
 import event.DCHit
 import event.FtofHit
+import event.ECHit
 
 class EventConverter {
 
@@ -91,11 +92,14 @@ class EventConverter {
             def cher = dataEvent.getBank("REC::Cherenkov")
             (0 ..< cher.rows()).each{ index ->
                 def pindex = cher.getShort('pindex',index).toInteger()
-                event.cherenkov_status.add(pindex)
-                event.nphe.put(pindex, cher.getFloat('nphe', index))
-                event.cherenkov_sector.put(pindex, cher.getByte('sector', index))
-                event.cherenkov_time.put(pindex, cher.getFloat('time', index))
-                event.cherenkov_path.put(pindex, cher.getFloat('path', index))
+                def detector = cher.getByte('detector', index)
+                if (detector == DetectorType.HTCC.getDetectorId()){
+                    event.cherenkov_status.add(pindex)
+                    event.nphe.put(pindex, cher.getFloat('nphe', index))
+                    event.cherenkov_sector.put(pindex, cher.getByte('sector', index))
+                    event.cherenkov_time.put(pindex, cher.getFloat('time', index))
+                    event.cherenkov_path.put(pindex, cher.getFloat('path', index))
+                }
             }
         }
     }
@@ -204,7 +208,10 @@ class EventConverter {
         if (dataEvent.hasBank("REC::Traj")){
             def traj = dataEvent.getBank("REC::Traj")
 
-            (0 ..< traj.rows()).collect{ index ->
+            (0 ..< traj.rows()).findAll{
+                def detector = traj.getByte('detector', index)
+                detector == DetectorType.DC.getDetectorId()
+            }.collect{ index ->
                 [ pindex : traj.getShort('pindex', index).toInteger(),
                   data : new DCHit(
                           x : traj.getFloat('x', index),
@@ -259,9 +266,12 @@ class EventConverter {
             def track = dataEvent.getBank("REC::Track")
             (0 ..< track.rows()).each{ index ->
                 def pindex = track.getShort('pindex', index).toInteger()
-                event.dc_sector.put(pindex, track.getByte('sector', index))
-                event.dc_chi2.put(pindex, track.getFloat('chi2', index))
-                event.dc_ndf.put(pindex, track.getShort('NDF', index))
+                def detector = track.getByte('detector', index)
+                if (detector == DetectorType.DC.getDetectorId()){
+                    event.dc_sector.put(pindex, track.getByte('sector', index))
+                    event.dc_chi2.put(pindex, track.getFloat('chi2', index))
+                    event.dc_ndf.put(pindex, track.getShort('NDF', index))
+                }
             }
         }
     }
