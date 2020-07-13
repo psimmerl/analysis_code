@@ -6,12 +6,12 @@ import org.jlab.clas.physics.Vector3
 import org.jlab.groot.data.H2F
 import org.jlab.groot.data.TDirectory
 import org.jlab.groot.data.TCanvas
-import org.jlab.groot.data.TLegend
+//import org.jlab.groot.data.TLegend
 
 //import pid.electron.Electron
-
+println "starting"
 def canvas = new TCanvas("Canvas", "Canvas",1000,1000)
-
+println "made canvas"
 //TODO: Do I need to redo this but with 60 histograms? 10 hists w/ 6 sectors
 def hW = [new H2F("h0","WvQ2,(0,1];Q^{2} (GeV);W (GeV/c^{2}?)",10,0,1,10,0,10),
           new H2F("h1","WvQ2,(1,2];Q^{2} (GeV);W (GeV/c^{2}?)",10,1,2,10,0,10),
@@ -24,15 +24,16 @@ def hW = [new H2F("h0","WvQ2,(0,1];Q^{2} (GeV);W (GeV/c^{2}?)",10,0,1,10,0,10),
           new H2F("h8","WvQ2,(8,9];Q^{2} (GeV);W (GeV/c^{2}?)",10,8,9,10,0,10),
           new H2F("h9","WvQ2,(9,10];Q^{2} (GeV);W (GeV/c^{2}?)",10,9,10,10,0,10)]
 
+println "made hist"
 def beam    = LorentzVector.withPID(11,0,0,10.6)
 def target  = LorentzVector.withPID(2212,0,0,0)
 
 canvas.Divide(5, 2)
-
+println "divided"
 for(fname in args) {
    def reader = new HipoDataSource()
    reader.open(fname)
-   
+   println "open"
    while(reader.hasEvent()) {
       def event = reader.getNextEvent()
       if(event.hasBank("REC::Particle") && event.hasBank("REC::Calorimeter")) {
@@ -56,6 +57,7 @@ for(fname in args) {
       }  
    }
    reader.close()
+   println "closed"
 }
 
 
@@ -64,6 +66,7 @@ hW.eachWithIndex{it,index->
    canvas.cd(index)
    //it.getXaxis().SetTitle("Q^{2} (GeV)"
    it.Draw()
+   println "draw"
 }
 out.add(canvas)
 out.addDataset(hW)
