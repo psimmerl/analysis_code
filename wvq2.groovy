@@ -5,26 +5,25 @@ import org.jlab.clas.physics.LorentzVector
 import org.jlab.clas.physics.Vector3
 import org.jlab.groot.data.H2F
 import org.jlab.groot.data.TDirectory
-import org.jlab.groot.data.TCanvas
-//import org.jlab.groot.data.TLegend
+import javax.swing.JFrame
+import org.jlab.groot.graphics.EmbeddedCanvas
 
 //import pid.electron.Electron
 println "starting"
-def canvas = new TCanvas("Canvas", "Canvas",1000,1000)
+def frame = new JFrame("WvQ2 Groovy Analysis")
+def canvas = new EmbeddedCanvas()//("Canvas", "Canvas",1000,1000)
+frame.setSize(1000,1000)
 println "made canvas"
-//TODO: Do I need to redo this but with 60 histograms? 10 hists w/ 6 sectors
-def hW = [new H2F("h0","WvQ2,(0,1];Q^{2} (GeV);W (GeV/c^{2}?)",10,0,1,10,0,10),
-          new H2F("h1","WvQ2,(1,2];Q^{2} (GeV);W (GeV/c^{2}?)",10,1,2,10,0,10),
-          new H2F("h2","WvQ2,(2,3];Q^{2} (GeV);W (GeV/c^{2}?)",10,2,3,10,0,10),
-          new H2F("h3","WvQ2,(3,4];Q^{2} (GeV);W (GeV/c^{2}?)",10,3,4,10,0,10),
-          new H2F("h4","WvQ2,(4,5];Q^{2} (GeV);W (GeV/c^{2}?)",10,4,5,10,0,10),
-          new H2F("h5","WvQ2,(5,6];Q^{2} (GeV);W (GeV/c^{2}?)",10,5,6,10,0,10),
-          new H2F("h6","WvQ2,(6,7];Q^{2} (GeV);W (GeV/c^{2}?)",10,6,7,10,0,10),
-          new H2F("h7","WvQ2,(7,8];Q^{2} (GeV);W (GeV/c^{2}?)",10,7,8,10,0,10),
-          new H2F("h8","WvQ2,(8,9];Q^{2} (GeV);W (GeV/c^{2}?)",10,8,9,10,0,10),
-          new H2F("h9","WvQ2,(9,10];Q^{2} (GeV);W (GeV/c^{2}?)",10,9,10,10,0,10)]
 
-println "made hist"
+def hW = []
+for(int i = 0; i < 1 /*6*/; i++ ) {
+   for(int j = 0; j < 10; j++) {
+      hW.add(new H2F("h-${i}-${j}",
+         "WvQ^{2} Sector ${i};Q^{2} (GeV);W (GeV/c^{2}?)",10,j,j+1,10,0,10))
+   }
+}
+
+println "made hists"
 def beam    = LorentzVector.withPID(11,0,0,10.6)
 def target  = LorentzVector.withPID(2212,0,0,0)
 
@@ -40,13 +39,13 @@ for(fname in args) {
          def partb = event.getBank("REC::Particle")
          //def calb  = event.getBank("REC::Calorimeter")
          def my_ele = (0..<partb.rows()
-            ).findAll{partb.getInt('pid',it)==11 && partb.getShort('status',it)<0
+            ).findAll{partb.getInt('pid',it)==11 && partb.getShort('status',it)<0//TODO: Vaguely remember this means only trigger electron, if so I should remove
             }.findResults{iele->
                def ele = LorentzVector.withPID(11,*['px','py','pz'].collect{partb.getFloat(it,iele)})
                def eX  = beam+target-ele
                def Q2  = (beam.p()-eX.p())**2
                
-               hW[floor(Q2)].fill(Q2,eX.mass())i
+               hW[floor(Q2)].fill(Q2,eX.mass())
                //TODO: Need to figure out how to split based on azimuthal sector
                
                return ele.e()>1.5 ? ele : null
@@ -65,9 +64,12 @@ def out = new TDirectory()
 hW.eachWithIndex{it,index->
    canvas.cd(index)
    //it.getXaxis().SetTitle("Q^{2} (GeV)"
-   it.Draw()
+   canvas.draw(it)
    println "draw"
 }
+frame.add(canvas)
+frame.setLocationRelativeTo(null)
+frame.setVisible(true)
 out.add(canvas)
 out.addDataset(hW)
 out.writeFile('wvq2.hipo')
