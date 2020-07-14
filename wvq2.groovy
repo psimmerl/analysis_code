@@ -12,7 +12,7 @@ import my.Sugar
 
 Sugar.enable()
 
-
+//TODO: IN ONE BIG HISTOGRAM WITH NO SECTOR MODE fix: hist for i j loop, hist x dim, canvas.divide(..), hW[floor(..)].fill(..)
 //import pid.electron.Electron
 println "starting"
 def frame = new JFrame("WvQ2 Groovy Analysis")
@@ -21,15 +21,15 @@ frame.setSize(3840,2160)
 
 def hW = []
 for(int i = 0; i < 1 /*6*/; i++ ) {
-   for(int j = 0; j < 10; j+=1) {
-      hW.add(new H2F("h-${i}-${j}","W vs Q^2",100,j,j+1,100,0,4.5))
+   for(int j = 0; j < 1 /*10*/; j+=1) {
+      hW.add(new H2F("h-${i}-${j}","W vs Q^2",500,j,10/*j+1*/,200,0,4.5))
    }
 }
 
 def beam    = LorentzVector.withPID(11,0,0,10.6)
 def target  = LorentzVector.withPID(2212,0,0,0)
 
-canvas.divide(5, 2)
+//canvas.divide(5, 2)
 for(fname in args) {
    def skipped = 0
    def reader = new HipoDataSource()
@@ -49,7 +49,7 @@ for(fname in args) {
                def Q2 = KinTool.calcQ2(beam, ele)
                //if (eX.mass()>max) { max = eX.mass() }
                if (Q2<10){ 
-                  hW[Math.floor(Q2)].fill(Q2,eX.mass())//Not sure if this is what W & Q2 are
+                  hW[0 /*Math.floor(Q2)*/].fill(Q2,eX.mass())//Not sure if this is what W & Q2 are
                } else {
                   //println Q2
                   skipped++
@@ -71,9 +71,10 @@ for(fname in args) {
 
 
 //def out = new TDirectory()
-canvas.setTitleSize(32)
-canvas.setAxisTitleSize(24)
-canvas.setAxisLabelSize(18)
+canvas.setTitleSize(56)
+canvas.setAxisTitleSize(48)
+canvas.setAxisLabelSize(48)
+canvas.setStatBoxFontSize(36)
 hW.eachWithIndex{it,index->
    canvas.cd(index)
    it.setTitleX("Q^2 (GeV)")
