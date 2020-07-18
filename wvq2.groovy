@@ -20,12 +20,13 @@ println "starting"
 //def canvas = new EmbeddedCanvas()//("Canvas", "Canvas",1000,1000)
 //frame.setSize(3840,2160)
 
-def hW = []
+/*def hW = []
 for(int i = 1; i < 7; i++ ) {
    for(int j = 0; j < 10; j++) {
       hW.add(new H1F("hq2w_sec${i}_q2bin${j}","W (Q^2 bin of ${j} to ${j+1})",100,0,4.5))
    }
-}
+}*/
+def h = new H1F("hq2w","W (Q^2 bin of 1 to 10)",100,0,4.5)
 
 def beam    = LorentzVector.withPID(11,0,0,10.6)
 def target  = LorentzVector.withPID(2212,0,0,0)
@@ -51,7 +52,8 @@ for(fname in args) {
                //if (eX.mass()>max) { max = eX.mass() }
                if (Q2<10){
                   def sector = calb.getByte('sector',iele)
-                  hW[(sector-1)*10+Math.floor(Q2)].fill(eX.mass())//Not sure if this is what W & Q2 are
+                  //hW[(sector-1)*10+Math.floor(Q2)].fill(eX.mass())//Not sure if this is what W & Q2 are
+                  h.fill(eX.mass())
                } else {
                   //println Q2
                   skipped++
