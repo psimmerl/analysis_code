@@ -1,8 +1,5 @@
 import org.jlab.io.hipo.HipoDataSource
-//import org.jlab.detector.base.DetectorType
-//import org.jlab.clas.physics.Particle
 import org.jlab.clas.physics.LorentzVector
-//import org.jlab.clas.physics.Vector3
 import org.jlab.groot.data.H1F
 import org.jlab.jroot.ROOTFile
 import utils.KinTool
@@ -11,24 +8,18 @@ import my.Sugar
 Sugar.enable()
 
 def hW = []
-//println hW.size()
 for(int i = 1; i < 7; i++ ) {
   for(int j = 0; j < 10; j++) {
     hW.add(new H1F("hq2w_sec${i}_q2bin${j}","W (Q^2 ${j}-${j+1})",100,0,4.5))
   }
 }
-//println hW.size()
 for(int i = 0; i < 10; i++) {
   hW.add(new H1F("hq2w_q2bin${i}","W (Q^2 ${i}-${i+1})",100,0,4.5))
 }
-//println hW.size()
 for(int i = 1; i < 7; i++ ) { 
   hW.add(new H1F("hq2w_sec${i}","Sector ${i} W (Q^2 1-10})",100,0,4.5)) 
 }
-//println hW.size()
 hW.add(new H1F("hq2w_complete","W (Q^2 1-10)",100,0,4.5))
-
-//println hW.size()
 
 def beam    = LorentzVector.withPID(11,0,0,10.6)
 def target  = LorentzVector.withPID(2212,0,0,0)
