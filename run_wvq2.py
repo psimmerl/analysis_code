@@ -12,6 +12,8 @@ for sec in range(6):
    for i in range(10):
       c1.cd(i+1)
       h1s[sec*10+i].Draw("same")
+      h1s[sec*10+i].Fit("gaus","","",0.75,1.1)
+
 
 
 c2 = ROOT.TCanvas("c2","c2",2200,1600)
@@ -20,6 +22,7 @@ c2.Divide(5,2)
 for i in range(10):
   c2.cd(i+1)
   h1s[i].Draw()
+  h1s[i].Fit("gaus","","",0.75,1.1)
 
 
 c3 = ROOT.TCanvas("c3","c3",2200,1600)
@@ -28,13 +31,14 @@ c3.Divide(3,2)
 for sec in range(6):
   c3.cd(sec+1)
   h1s[sec].Draw()
+  h1s[sec].Fit("gaus","","",0.75,1.1)
 
 
 c4 = ROOT.TCanvas("c4","c4",2200,1600)
 h1s = [ff.Get("hq2w_complete")]
 c4.cd()
 h1s[0].Draw()
-
+h1s[0].Fit("gaus","","",0.75,1.1)
 
 c1.Print("out10h6s.pdf")
 c2.Print("out10h.pdf")
