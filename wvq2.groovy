@@ -43,8 +43,8 @@ for(fname in args) {
             def sector = calb.getByte('sector',iele)
             def eX  = beam+target-ele
             hW[(sector-1)*10+Math.floor(Q2)].fill(eX.mass())
-            hW[Math.floor(Q2)+0].fill(eX.mass())//+60 if inclding 10+6 sec
-            hW[(sector-1)+10].fill(eX.mass())//+70
+            hW[Math.floor(Q2)+60].fill(eX.mass())//+60 if inclding 10+6 sec
+            hW[(sector-1)+70].fill(eX.mass())//+70
             hW[-1].fill(eX.mass())
           } else {
             //println Q2
