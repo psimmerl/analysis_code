@@ -1,0 +1,8 @@
+ FCN=936.706 FROM MIGRAD    STATUS=CONVERGED      79 CALLS          80 TOTAL
+                     EDM=1.55454e-07    STRATEGY= 1      ERROR MATRIX ACCURATE 
+  EXT PARAMETER                                   STEP         FIRST   
+  NO.   NAME      VALUE            ERROR          SIZE      DERIVATIVE 
+   1  Constant     1.89710e+04   8.65835e+01   9.36185e-01   8.28553e-06
+   2  Mean         9.39379e-01   4.54773e-04   6.15314e-06  -2.10149e-01
+   3  Sigma        9.73621e-02   5.22227e-04   2.07681e-05   1.62023e-01
+Info in <TCanvas::Print>: pdf file hists/out1h.pdf has been created
