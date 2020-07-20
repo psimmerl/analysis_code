@@ -5,7 +5,7 @@ ROOT.gStyle.SetOptFit(0011)
 
 ff =  ROOT.TFile('q2w_hs.root')#sys.argv[1])
 
-target = [4]
+target = [1,2,3,4]
 
 if 1 in target: #len(h1s) > 0:
   h1s =[ff.Get("hq2w_sec"+str(sec)+"_q2bin"+str(q2bin)) for sec in range(1,7) for q2bin in range(10)]
