@@ -54,8 +54,8 @@ def my_draw(hist):
   legend.AddEntry(fit,            "Global Fit",     "l")
   legend.AddEntry(bg_fit,         "Background Fit", "l")
   legend.AddEntry(proton_fit,     "Proton Fit",     "l") 
-  #legend.AddEntry(None,"\mu {:.5f}\pm{:.5f} GeV".format(pars[1],errs[1]), "")
-  #legend.AddEntry(None,"\sigma {:.5f}\pm{:.5f} GeV".format(pars[2],errs[2]), "")
+  legend.AddEntry(None,"\mu {:.5f}\pm{:.5f} GeV".format(pars[1],errs[1]), "")
+  legend.AddEntry(None,"\sigma {:.5f}\pm{:.5f} GeV".format(pars[2],errs[2]), "")
   legend.Draw()
 
 
@@ -76,11 +76,11 @@ if 1 in target: #len(h1s) > 0:
 
 if 2 in target: #len(h1s) > 0:
   c2 = ROOT.TCanvas("c2","c2",2200,1600)
+  c2.SetGrid()
   c2.Divide(5,2)
   h1s = [ff.Get("hq2w_q2bin"+str(q2bin)) for q2bin in range(10)]
   for i in range(10):
     c2.cd(i+1)
-    c2.SetGrid()
     my_draw(h1s[i])
   c2.Print("hists/out10h.pdf")
 
