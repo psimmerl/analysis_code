@@ -11,14 +11,14 @@ Sugar.enable()
 def hW = []
 for(int i = 1; i < 7; i++ ) {
   for(int j = 0; j < 10; j++) {
-    hW.add(new H1F("hq2w_sec${i}_q2bin${j}","W (Q^{2} ${j}-${j+1} GeV^{2})",500,0,4.5))
+    hW.add(new H1F("hq2w_sec${i}_q2bin${j}","W (Q^{2} ${j}-${j+1} GeV^{2})",1000,0,4.5))
   }
 }
-for(int i = 0; i < 10; i++) {
-  hW.add(new H1F("hq2w_q2bin${i}","W (Q^{2} ${i}-${i+1} GeV^{2})",500,0,4.5))
+/*for(int i = 0; i < 10; i++) {
+  hW.add(new H1F("hq2w_q2bin${i}","W (Q^{2} ${i}-${i+1} GeV^{2})",1000,0,4.5))
 }
 for(int i = 1; i < 7; i++ ) { 
-  hW.add(new H1F("hq2w_sec${i}","Sector ${i} W (Q^{2} 1-10 GeV^{2})",500,0,4.5)) 
+  hW.add(new H1F("hq2w_sec${i}","Sector ${i} W (Q^{2} 1-10 GeV^{2})",1000,0,4.5)) 
 }
 for(int i = 1; i < 7; i++ ) { 
   for(int j = 0; j < 10; j++) {
@@ -30,10 +30,10 @@ for(int i = 0; i < 10; i++) {
 }
 for(int i = 1; i < 7; i++ ) { 
   hW.add(new H1F("hq2w_sec${i}_proton","Sector ${i} W (Q^{2} 1-10 GeV^{2})",500,0.7,1.1)) 
-}
+}*/
 
-hW.add(new H1F("hq2w_complete","W (Q^{2} 1-10 GeV^{2})",500,0,4.5))
-hW.add(new H1F("hq2w_proton", "W (Q^{2} 1-10 GeV^{2})", 500, 0.7, 1.1))
+//hW.add(new H1F("hq2w_complete","W (Q^{2} 1-10 GeV^{2})",1000,0,4.5))
+//hW.add(new H1F("hq2w_proton", "W (Q^{2} 1-10 GeV^{2})", 500, 0.7, 1.1))
 
 def beam    = LorentzVector.withPID(11,0,0,10.6)
 def target  = LorentzVector.withPID(2212,0,0,0)
@@ -57,15 +57,15 @@ for(fname in args) {
             def eX  = beam+target-ele
             
             hW[(sector-1)*10+Math.floor(Q2)].fill(eX.mass())
-            hW[Math.floor(Q2)+60].fill(eX.mass())
-            hW[(sector-1)+70].fill(eX.mass())
+            //hW[Math.floor(Q2)+60].fill(eX.mass())
+            //hW[(sector-1)+70].fill(eX.mass())
 
-            hW[(sector-1)*10+Math.floor(Q2)+76].fill(eX.mass())
-            hW[Math.floor(Q2)+60+76].fill(eX.mass())
-            hW[(sector-1)+70+76].fill(eX.mass())
+            //hW[(sector-1)*10+Math.floor(Q2)+76].fill(eX.mass())
+            //hW[Math.floor(Q2)+60+76].fill(eX.mass())
+            //hW[(sector-1)+70+76].fill(eX.mass())
             
-            hW[-2].fill(eX.mass())
-            hW[-1].fill(eX.mass())
+            //hW[-2].fill(eX.mass())
+            //hW[-1].fill(eX.mass())
           } else {
             //println Q2
             skipped++
