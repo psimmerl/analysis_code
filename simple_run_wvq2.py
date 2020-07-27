@@ -65,14 +65,23 @@ def draw(hists, fits, pros, bgs, ls, dist):
   pros[-1].Draw("same")
   ls[-1].Draw()  
 
-def draw_graph(title, x_name, y_name, x_entries, y_entries):
-  graph = ROOT.TGraph(len(x_entries), x_entries, y_entries)
+def draw_graph(fname, title, x_name, y_name, x_entries, y_entries, x_err=None, y_err=None):
+  if x_err is None:
+    x_err = array("d", [0]*len(x_entries))
+  if y_err is None:
+    y_err = array("d", [0]*len(x_entries))
+  c = ROOT.TCanvas("c","c",2200,1600)
+  c.SetGrid()
+  graph = ROOT.TGraphErrors(len(x_entries), x_entries, y_entries, x_err, y_err)
   graph.SetLineWidth(3)
   graph.SetTitle(title)
   graph.SetLineColor(ROOT.kRed)
   graph.GetXaxis().SetTitle(x_name)
   graph.GetYaxis().SetTitle(y_name)
-  graph.Draw("*")
+  graph.SetMarkerStyle(8)
+  graph.SetMarkerSize(3)
+  graph.Draw("ALP")
+  c.Print(fname)
 
 hists, fits, pros, bgs, ls = [], [], [], [], []
 min_lim, max_lim, bins = hW[0].GetXaxis().GetXmin(), hW[0].GetXaxis().GetXmax(), hW[0].GetXaxis().GetNbins()
@@ -111,13 +120,9 @@ for i in range(10):
 ct.Print("hists/out10_total.pdf")
 cp.Print("hists/out10_proton.pdf")
 
-cp.Clear()
-draw_graph("Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", "N Entries", g10_x, g10_y)
-cp.Print("hists/out10_Nentries_Q2.pdf")
-
-
-
-
+draw_graph("hists/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", "N Entries", g10_x, array("d", [pro.Integral(0.7,1.1) for pro in pros]))
+draw_graph("hists/out10_muerr_Q2.pdf","Proton Peak (w/ fit errors) vs Q^{2}", "Q^{2} (GeV^{2})", "Peak (Gev)", g10_x, g10_y, None, array("d", [pro.GetParError(1) for pro in pros]))
+draw_graph("hists/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) vs Q^{2}", "Q^{2} (GeV^{2})", "Peak (GeV)", g10_x, g10_y, None, array("d", [pro.GetParameter(2) for pro in pros]))
 
 # 6
 ct.Clear()
