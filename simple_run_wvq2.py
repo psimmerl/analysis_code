@@ -99,7 +99,6 @@ ct.Divide(5,2)
 cp.Divide(5,2)
 
 g10_x = array("d")
-g10_y = array("d")
 
 for i in range(10):
   hists.append(ROOT.TH1F("h"+str(len(hists)), \
@@ -115,14 +114,20 @@ for i in range(10):
   draw(hists, fits, pros, bgs, ls, "proton")
 
   g10_x.append(i+0.5)
-  g10_y.append(pros[-1].Integral(0.7, 1.1))
 
 ct.Print("hists/out10_total.pdf")
 cp.Print("hists/out10_proton.pdf")
 
-draw_graph("hists/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", "N Entries", g10_x, array("d", [pro.Integral(0.7,1.1) for pro in pros]))
-draw_graph("hists/out10_muerr_Q2.pdf","Proton Peak (w/ fit errors) vs Q^{2}", "Q^{2} (GeV^{2})", "Peak (Gev)", g10_x, g10_y, None, array("d", [pro.GetParError(1) for pro in pros]))
-draw_graph("hists/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) vs Q^{2}", "Q^{2} (GeV^{2})", "Peak (GeV)", g10_x, g10_y, None, array("d", [pro.GetParameter(2) for pro in pros]))
+draw_graph("hists/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", \
+  "N Entries", g10_x, array("d", [pro.Integral(0.7,1.1) for pro in pros]))
+
+draw_graph("hists/out10_muerr_Q2.pdf","Proton Peak (w/ fit errors) vs Q^{2}", "Q^{2} (GeV^{2})", \
+  "Peak (Gev)", g10_x, array("d", [pro.GetParameter(1) for pro in pros]), None, \
+  array("d", [pro.GetParError(1) for pro in pros]))
+
+draw_graph("hists/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) vs Q^{2}", \
+  "Q^{2} (GeV^{2})", "Peak (GeV)", g10_x, array("d", [pro.GetParameter(1) for pro in pros]), None, \
+  array("d", [pro.GetParameter(2) for pro in pros]))
 
 # 6
 ct.Clear()
