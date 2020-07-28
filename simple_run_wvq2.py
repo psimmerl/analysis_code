@@ -39,9 +39,9 @@ def draw(hists, fits, pros, bgs, ls, dist):
     hists[-1].GetXaxis().SetTitle("W (GeV)")
     hists[-1].SetStats(0)
 
-    fits[-1].SetParameters(50, 0.9, 0.1, 10, 1, 0) 
+    fits[-1].SetParameters(100, 0.9, 0.1, 0, 0, 0) 
     fits[-1].SetParLimits(1, 0.7, 1.1)
-    fits[-1].SetParLimits(0, 0, 10e10)
+    #fits[-1].SetParLimits(0, 0, 10e100)
     hists[-1].Fit(fits[-1], "QR")
 
     pars = fits[-1].GetParameters()
@@ -73,7 +73,7 @@ def draw_graph(fname, title, x_name, y_name, x_entries, y_entries, x_err=None, y
     x_err = array("d", [0]*len(x_entries))
   if y_err is None:
     y_err = array("d", [0]*len(x_entries))
-  c = ROOT.TCanvas("c","c",2200,1600)
+  c = ROOT.TCanvas("cg","cg",2200,1600)
   c.SetGrid()
   graph = ROOT.TGraphErrors(len(x_entries), x_entries, y_entries, x_err, y_err)
   graph.SetLineWidth(2)
@@ -88,19 +88,13 @@ def draw_graph(fname, title, x_name, y_name, x_entries, y_entries, x_err=None, y
 
 hists, fits, pros, bgs, ls = [], [], [], [], []
 min_lim, max_lim, bins = hW[0].GetXaxis().GetXmin(), hW[0].GetXaxis().GetXmax(), hW[0].GetXaxis().GetNbins()
-ct = ROOT.TCanvas("ct","ct",2200,1600)
-ct.SetGrid()
-cp = ROOT.TCanvas("cp","cp",2200,1600)
-cp.SetGrid()
+c = ROOT.TCanvas("c","c",2200,1600)
+c.SetGrid()
    
 # 10
-ct.Clear()
-cp.Clear()
-ct.Divide(5,2)
-cp.Divide(5,2)
-
+c.Clear()
+c.Divide(5,2)
 g10_x = array("d")
-
 for i in range(10):
   hists.append(ROOT.TH1F("h"+str(len(hists)), \
     "W (GeV) (Q^{2} "+str(i)+"-"+str(i+1)+" GeV^{2})",bins,min_lim,max_lim))
@@ -108,16 +102,14 @@ for i in range(10):
     hists[-1].Add(hW[sec*10+i])
   if i >= 5: 
     hists[-1].Rebin(5)
-
-  ct.cd(i+1)
+  c.cd(i+1)
   draw(hists, fits, pros, bgs, ls, "total")
-  cp.cd(i+1)
-  draw(hists, fits, pros, bgs, ls, "proton")
-
   g10_x.append(i+0.5)
-
-ct.Print("hists/out10_total.pdf")
-cp.Print("hists/out10_proton.pdf")
+c.Print("hists/out10_total.pdf")
+for i in range(10):
+  c.cd(i+1)
+  draw([hists[-10+i]], [fits[-10+i]], [pros[-10+i]], [bgs[-10+i]], [ls[-10+i]], "proton")
+c.Print("hists/out10_proton.pdf")
 
 draw_graph("hists/graphs/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", \
   "N Entries", g10_x[1:6], array("d", [pro.Integral(0.7,1.1) for pro in pros[1:6]]))
@@ -131,45 +123,42 @@ draw_graph("hists/graphs/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) v
   pros[1:6]]), None, array("d", [pro.GetParameter(2) for pro in pros[1:6]]))
 
 # 6
-ct.Clear()
-cp.Clear()
-ct.Divide(3,2)
-cp.Divide(3,2)
+c.Clear()
+c.Divide(3,2)
 for sec in range(6):
   hists.append(ROOT.TH1F("h"+str(len(hists)),"Sector "+str(sec)+" W (GeV)",bins,min_lim,max_lim))
   for i in range(10):
     hists[-1].Add(hW[sec*10+i])
-  ct.cd(sec+1)
+  c.cd(sec+1)
   draw(hists, fits, pros, bgs, ls, "total")
-  cp.cd(sec+1)
-  draw(hists, fits, pros, bgs, ls, "proton")
-ct.Print("hists/out6_total.pdf")
-cp.Print("hists/out6_proton.pdf")
+c.Print("hists/out6_total.pdf")
+for sec in range(6):
+  c.cd(sec+1)
+  draw([hists[-6+i]], [fits[-6+i]], [pros[-6+i]], [bgs[-6+i]], [ls[-6+i]], "proton")
+c.Print("hists/out6_proton.pdf")
 
 # 1
-ct.Clear()
-cp.Clear()
+c.Clear()
 hists.append(ROOT.TH1F("h"+str(len(hists)),"Total Response of W (Gev)",bins,min_lim,max_lim))
 for i in range(60):
   hists[-1].Add(hW[i])
-ct.cd()
+c.cd()
 draw(hists, fits, pros, bgs, ls, "total")
-cp.cd()
+c.Print("hists/out1_total.pdf")
 draw(hists, fits, pros, bgs, ls, "proton")
-ct.Print("hists/out1_total.pdf")
-cp.Print("hists/out1_proton.pdf")
+c.Print("hists/out1_proton.pdf")
 
 #60 
-ct.Clear()
+c.Clear()
 mg = ROOT.TMultiGraph()
 g = []
 for sec in range(6):
   x, x_err, y, y_err = array("d"), array("d"), array("d"), array("d")
   for i in range(10):
     fit = ROOT.TF1("fit"+str(sec+1)+"_"+str(i), fitf, 0.7, 1.1, 6)
-    fit.SetParameters(50, 0.9, 0.1, 100, 1, 0) 
+    fit.SetParameters(100, 0.9, 0.1, 0, 0, 0) 
     fit.SetParLimits(1, 0.7, 1.1)
-    fit.SetParLimits(0, 0, 10e10)
+    #fit.SetParLimits(0, 0, 10e10)
     hW[sec*10+i].Fit(fit, "QR")
     if abs(fit.GetParameter(1))<3 and abs(fit.GetParError(1))<3:
       x.append(i+0.5)
@@ -191,6 +180,6 @@ mg.SetTitle("Proton Peak vs Q^{2} for each sector")
 mg.GetYaxis().SetTitle("Proton Peak (GeV)")
 mg.GetXaxis().SetTitle("Q^{2} (GeV^{2})")
 mg.Draw("ALP")
-ct.BuildLegend()
-ct.Print("hists/graphs/out60.pdf")
+c.BuildLegend()
+c.Print("hists/graphs/out60.pdf")
 
