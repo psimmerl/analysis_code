@@ -2,6 +2,7 @@ import ROOT, math
 from array import array
 
 ROOT.gROOT.SetBatch()
+ROOT.gStyle.SetEndErrorSize(10)
 
 ff =  ROOT.TFile('q2w_hs.root')#sys.argv[1])
 
@@ -38,8 +39,8 @@ def draw(hists, fits, pros, bgs, ls, dist):
     hists[-1].GetXaxis().SetTitle("W (GeV)")
     hists[-1].SetStats(0)
 
-    fits[-1].SetParameters(50, 0.9, 0.1, 100, 1, 0) 
-    hists[-1].Fit(fits[-1], "R")
+    fits[-1].SetParameters(50, 0.9, 0.1, 10, 1, 0) 
+    hists[-1].Fit(fits[-1], "QR")
 
     pars = fits[-1].GetParameters()
     errs = fits[-1].GetParErrors()
@@ -73,9 +74,9 @@ def draw_graph(fname, title, x_name, y_name, x_entries, y_entries, x_err=None, y
   c = ROOT.TCanvas("c","c",2200,1600)
   c.SetGrid()
   graph = ROOT.TGraphErrors(len(x_entries), x_entries, y_entries, x_err, y_err)
-  graph.SetLineWidth(3)
+  graph.SetLineWidth(2)
   graph.SetTitle(title)
-  graph.SetLineColor(ROOT.kRed)
+  graph.SetMarkerColor(ROOT.kRed)
   graph.GetXaxis().SetTitle(x_name)
   graph.GetYaxis().SetTitle(y_name)
   graph.SetMarkerStyle(8)
@@ -89,9 +90,7 @@ ct = ROOT.TCanvas("ct","ct",2200,1600)
 ct.SetGrid()
 cp = ROOT.TCanvas("cp","cp",2200,1600)
 cp.SetGrid()
-  
-#TODO: 60
-  
+   
 # 10
 ct.Clear()
 cp.Clear()
@@ -118,16 +117,16 @@ for i in range(10):
 ct.Print("hists/out10_total.pdf")
 cp.Print("hists/out10_proton.pdf")
 
-draw_graph("hists/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", \
-  "N Entries", g10_x, array("d", [pro.Integral(0.7,1.1) for pro in pros]))
+draw_graph("hists/graphs/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", \
+  "N Entries", g10_x[1:6], array("d", [pro.Integral(0.7,1.1) for pro in pros[1:6]]))
 
-draw_graph("hists/out10_muerr_Q2.pdf","Proton Peak (w/ fit errors) vs Q^{2}", "Q^{2} (GeV^{2})", \
-  "Peak (Gev)", g10_x, array("d", [pro.GetParameter(1) for pro in pros]), None, \
-  array("d", [pro.GetParError(1) for pro in pros]))
+draw_graph("hists/graphs/out10_muerr_Q2.pdf","Proton Peak (w/ fit errors) vs Q^{2}", \
+  "Q^{2} (GeV^{2})", "Peak (Gev)", g10_x[1:6], array("d", [pro.GetParameter(1) for pro in \
+  pros[1:6]]), None, array("d", [fit.GetParError(1) for fit in fits[1:6]]))
 
-draw_graph("hists/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) vs Q^{2}", \
-  "Q^{2} (GeV^{2})", "Peak (GeV)", g10_x, array("d", [pro.GetParameter(1) for pro in pros]), None, \
-  array("d", [pro.GetParameter(2) for pro in pros]))
+draw_graph("hists/graphs/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) vs Q^{2}", \
+  "Q^{2} (GeV^{2})", "Peak (GeV)", g10_x[1:6], array("d", [pro.GetParameter(1) for pro in \
+  pros[1:6]]), None, array("d", [pro.GetParameter(2) for pro in pros[1:6]]))
 
 # 6
 ct.Clear()
@@ -158,4 +157,36 @@ draw(hists, fits, pros, bgs, ls, "proton")
 ct.Print("hists/out1_total.pdf")
 cp.Print("hists/out1_proton.pdf")
 
+#60 
+ct.Clear()
+mg = ROOT.TMultiGraph()
+g = []
+for sec in range(6):
+  x, x_err, y, y_err = array("d"), array("d"), array("d"), array("d")
+  for i in range(10):
+    fit = ROOT.TF1("fit"+str(sec+1)+"_"+str(i), fitf, 0.7, 1.1, 6)
+    fit.SetParameters(50, 0.9, 0.1, 100, 1, 0) 
+    hW[sec*10+i].Fit(fit, "QR")
+    if abs(fit.GetParameter(1))<3 and abs(fit.GetParError(1))<3:
+      x.append(i+0.5)
+      x_err.append(0)
+      y.append(fit.GetParameter(1))
+      y_err.append(fit.GetParError(1))
+    else:
+      print "Error with Q^2 "+str(i+0.5)+" , Sector "+str(sec+1)+" :"
+      print "\ty  = "+str(fit.GetParameter(1))
+      print "\tey = "+str(fit.GetParError(1))
+  g.append(ROOT.TGraphErrors(len(x), x, y, x_err, y_err))
+  g[-1].SetLineWidth(2)
+  g[-1].SetLineColor(sec+1)
+  g[-1].SetMarkerStyle(8)
+  g[-1].SetMarkerSize(3)
+  g[-1].SetTitle("Sector "+str(sec+1))
+  mg.Add(g[-1])
+mg.SetTitle("Proton Peak vs Q^{2} for each sector")
+mg.GetYaxis().SetTitle("Proton Peak (GeV)")
+mg.GetXaxis().SetTitle("Q^{2} (GeV^{2})")
+mg.Draw("ALP")
+ct.BuildLegend()
+ct.Print("hists/graphs/out60.pdf")
 
