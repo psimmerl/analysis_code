@@ -40,6 +40,8 @@ def draw(hists, fits, pros, bgs, ls, dist):
     hists[-1].SetStats(0)
 
     fits[-1].SetParameters(50, 0.9, 0.1, 10, 1, 0) 
+    fits[-1].SetParLimits(1, 0.7, 1.1)
+    fits[-1].SetParLimits(0, 0, 10e10)
     hists[-1].Fit(fits[-1], "QR")
 
     pars = fits[-1].GetParameters()
@@ -166,6 +168,8 @@ for sec in range(6):
   for i in range(10):
     fit = ROOT.TF1("fit"+str(sec+1)+"_"+str(i), fitf, 0.7, 1.1, 6)
     fit.SetParameters(50, 0.9, 0.1, 100, 1, 0) 
+    fit.SetParLimits(1, 0.7, 1.1)
+    fit.SetParLimits(0, 0, 10e10)
     hW[sec*10+i].Fit(fit, "QR")
     if abs(fit.GetParameter(1))<3 and abs(fit.GetParError(1))<3:
       x.append(i+0.5)
