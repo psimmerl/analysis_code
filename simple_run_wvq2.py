@@ -94,7 +94,6 @@ c.SetGrid()
 # 10
 c.Clear()
 c.Divide(5,2)
-g10_x = array("d")
 for i in range(10):
   hists.append(ROOT.TH1F("h"+str(len(hists)), \
     "W (GeV) (Q^{2} "+str(i)+"-"+str(i+1)+" GeV^{2})",bins,min_lim,max_lim))
@@ -104,7 +103,6 @@ for i in range(10):
     hists[-1].Rebin(5)
   c.cd(i+1)
   draw(hists, fits, pros, bgs, ls, "total")
-  g10_x.append(i+0.5)
 c.Print("hists/out10_total.pdf")
 for i in range(10):
   c.cd(i+1)
@@ -112,15 +110,18 @@ for i in range(10):
 c.Print("hists/out10_proton.pdf")
 
 draw_graph("hists/graphs/out10_Nentries_Q2.pdf","Entries in Proton vs Q^{2}", "Q^{2} (GeV^{2})", \
-  "N Entries", g10_x[1:6], array("d", [pro.Integral(0.7,1.1) for pro in pros[1:6]]))
+  "N Entries", array("d",[x+0.5 for x in range(10)]), array("d", [hist.Integral( \
+  int(math.floor(0.7*hist.GetXaxis().GetNbins()/(hist.GetXaxis().GetXmax()-hist.GetXaxis().GetXmin()))), \
+  int(math.floor(1.1*hist.GetXaxis().GetNbins()/(hist.GetXaxis().GetXmax()-hist.GetXaxis().GetXmin())))) \
+  for hist in hists]))
 
 draw_graph("hists/graphs/out10_muerr_Q2.pdf","Proton Peak (w/ fit errors) vs Q^{2}", \
-  "Q^{2} (GeV^{2})", "Peak (Gev)", g10_x[1:6], array("d", [pro.GetParameter(1) for pro in \
-  pros[1:6]]), None, array("d", [fit.GetParError(1) for fit in fits[1:6]]))
+  "Q^{2} (GeV^{2})", "Peak (Gev)", array("d",[x+0.5 for x in range(10)]), array("d", [pro.GetParameter(1) for pro in \
+  pros]), None, array("d", [fit.GetParError(1) for fit in fits]))
 
 draw_graph("hists/graphs/out10_musig_Q2.pdf","Proton Peak (w/ \sigma as error) vs Q^{2}", \
-  "Q^{2} (GeV^{2})", "Peak (GeV)", g10_x[1:6], array("d", [pro.GetParameter(1) for pro in \
-  pros[1:6]]), None, array("d", [pro.GetParameter(2) for pro in pros[1:6]]))
+  "Q^{2} (GeV^{2})", "Peak (GeV)", array("d",[x+0.5 for x in range(10)]), array("d", [pro.GetParameter(1) for pro in \
+  pros]), None, array("d", [pro.GetParameter(2) for pro in pros]))
 
 # 6
 c.Clear()
@@ -136,6 +137,19 @@ for sec in range(6):
   c.cd(sec+1)
   draw([hists[-6+i]], [fits[-6+i]], [pros[-6+i]], [bgs[-6+i]], [ls[-6+i]], "proton")
 c.Print("hists/out6_proton.pdf")
+
+draw_graph("hists/graphs/out6_Nentries_sec.pdf","Entries in Proton vs Sector", "Sector", \
+  "N Entries", array("d",range(1,7)), array("d", [hist.Integral( \
+  int(math.floor(0.7*hist.GetXaxis().GetNbins()/(hist.GetXaxis().GetXmax()-hist.GetXaxis().GetXmin()))), \
+  int(math.floor(1.1*hist.GetXaxis().GetNbins()/(hist.GetXaxis().GetXmax()-hist.GetXaxis().GetXmin())))) for hist in hists[-6:]]))
+
+draw_graph("hists/graphs/out6_muerr_sec.pdf","Proton Peak (w/ fit errors) vs Sector", "Sector", \
+  "Peak (Gev)", array("d",range(1,7)), array("d", [pro.GetParameter(1) for pro in \
+  pros[-6:]]), None, array("d", [fit.GetParError(1) for fit in fits[-6:]]))
+
+draw_graph("hists/graphs/out6_musig_sec.pdf","Proton Peak (w/ \sigma as error) vs Sector", "Sector",\
+  "Peak (GeV)", array("d",range(1,7)), array("d", [pro.GetParameter(1) for pro in \
+  pros[-6:]]), None, array("d", [pro.GetParameter(2) for pro in pros[-6:]]))
 
 # 1
 c.Clear()
@@ -160,7 +174,7 @@ for sec in range(6):
     fit.SetParLimits(1, 0.7, 1.1)
     #fit.SetParLimits(0, 0, 10e10)
     hW[sec*10+i].Fit(fit, "QR")
-    if abs(fit.GetParameter(1))<3 and abs(fit.GetParError(1))<3:
+    if abs(fit.GetParError(1))<3:
       x.append(i+0.5)
       x_err.append(0)
       y.append(fit.GetParameter(1))
