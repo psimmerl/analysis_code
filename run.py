@@ -59,9 +59,9 @@ def draw(hists, fits, pros, bgs, ls, dist):
     axis.SetRange(BinFloor(min_b,bc), BinFloor(max_b,bc))
     fits[-1].SetParameters(s, mu, sig, cons, lin, 0, 0) 
     #fits[-1].SetParameters(100,.9,.1,0,0,0)
-    fits[-1].SetParLimits(0, 0, 10e6)
+    #fits[-1].SetParLimits(0, 0, 10e6)
     fits[-1].SetParLimits(1, 0.7, 1.1)
-    fits[-1].SetParLimits(2, 0.0001, 10e6)
+    #fits[-1].SetParLimits(2, 0.0001, 10e6)
     hists[-1].Fit(fits[-1], "R")
 
     #fits.append(best_fit)
@@ -268,7 +268,7 @@ for zoom in ["total", "proton"]:
     hQ2W2D[sec].GetXaxis().SetTitle("W (GeV)")
     hQ2W2D[sec].GetYaxis().SetTitle("Q^{2} (GeV^{2})")
     #h2D[-1].SetStats(0)
-    hQ2W2D[sec].Draw()
+    hQ2W2D[sec].Draw("COLZ")
     c.Print("hists/new/out2D_Q2W_"+zoom+"_sec"+str(sec+1)+".pdf")
 
 c.Clear()
@@ -276,7 +276,7 @@ hTotal2D = hQ2W2D[0]
 hTotal2D.SetTitle("Q^{2} vs W")
 for sec in range(1,6):
   hTotal2D.Add(hQ2W2D[sec])
-hTotal2D.Draw()
+hTotal2D.Draw("COLZ")
 hTotal2D.GetXaxis().SetTitle("W (GeV)")
 hTotal2D.GetYaxis().SetTitle("Q^{2} (GeV^{2})")
 c.Print("hists/new/out2D_Q2W_total.pdf")
@@ -285,7 +285,7 @@ c.Clear()
 hTotal2D.GetXaxis().SetRangeUser(0.7, 1.1)
 hTotal2D.GetXaxis().SetTitle("W (GeV)")
 hTotal2D.GetYaxis().SetTitle("Q^{2} (GeV^{2})")
-hTotal2D.Draw()
+hTotal2D.Draw("COLZ")
 c.Print("hists/new/out2D_Q2W_proton.pdf")
 
 
@@ -298,7 +298,7 @@ for sec in range(6):
   hThetaP2D[sec].GetXaxis().SetTitle("#theta")
   hThetaP2D[sec].GetYaxis().SetTitle("P (GeV)")
   #h2D[-1].SetStats(0)
-  hThetaP2D[sec].Draw()
+  hThetaP2D[sec].Draw("COLZ")
 
 c.Print("hists/new/out2D_ThetaP_6.pdf")
 
@@ -307,7 +307,7 @@ hTotal2D = hThetaP2D[0]
 hTotal2D.SetTitle("#theta vs P")
 for sec in range(1,6):
   hTotal2D.Add(hThetaP2D[sec])
-hTotal2D.Draw()
+hTotal2D.Draw("COLZ")
 c.Print("hists/new/out2D_ThetaP_total.pdf")
 
 
@@ -316,6 +316,6 @@ hThetaPhi = ff.Get("H2F_ThetaPhi")
 c.Clear()
 hThetaPhi.GetXaxis().SetTitle("#theta")
 hThetaPhi.GetYaxis().SetTitle("#phi")
-hThetaPhi.Draw()
+hThetaPhi.Draw("COLZ")
 c.Print("hists/new/out_ThetaPhi.pdf")
 

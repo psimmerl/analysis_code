@@ -39,18 +39,21 @@ for(fname in args) {
         }.each{iele->
           def ele = LorentzVector.withPID(11,*['px','py','pz'].collect{partb.getFloat(it,iele)})
           def Q2 = KinTool.calcQ2(beam, ele) //def Q2  = (beam.p()-eX.p())**2
+          def sector = calb.getByte('sector',iele)
+          def path = calb.getFloat('path',iele)
+          def x = calb.getFloat('x', iele)
+          def y = calb.getFloat('y', iele)
+          def theta = Math.asin((x**2+y**2)/path)*180/Math.PI
+          def phi = Math.atan(y/x)*180/Math.PI
+          def eX  = beam+target-ele
+          println "p=${ele.p()}"
+          println "p=${theta}"
+          println "p=${phi}"
+          hThetaP[sector-1].fill(theta, ele.p())
+          hThetaPhi.fill(theta, phi)
           if (Q2<10){
-            def sector = calb.getByte('sector',iele)
-            def eX  = beam+target-ele
-            def path = calb.getFloat('path',iele)
-            def x = calb.getFloat('x', iele)
-            def y = calb.getFloat('y', iele)
-            def theta = Math.asin((x**2+y**2)/path)*180/Math.PI
-            def phi = Math.atan(y/x)*180/Math.PI
             hW[(sector-1)*10+Math.floor(Q2)].fill(eX.mass())
             hW2D[sector-1].fill(eX.mass(), Q2)
-            hThetaP[sector-1].fill(theta, ele.p())
-            hThetaPhi.fill(theta, phi)
           } else {
             skipped++
           }
