@@ -1,0 +1,22 @@
++-------------------------------------------------------------------------
+| COATJAVA LIBRARY DIRECTORY =  /group/clas12/packages/coatjava/6.5.3/bin/..//lib/clas/
++-------------------------------------------------------------------------
+ 
+ 
+*****************************************
+*    Running COAT-JAVA Groovy Scripts   *
+*    Version : 3a  Release : 2016       *
+*****************************************
+ 
+ 
+[SystemFonts] ---> set size = 25, available 2
+reader:: *****>>>>> openning file : /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005038.hipo
+reader:: ***** dictionary entries :          135
+reader:: ************ file size   :  20899891076
+reader:: **** scan trailer #bytes :       119928
+reader:: ***** number of  records :         3747
+reader:: ***** number of  events  :      8934140
+[DataSourceDump] --> opened file with events # 
+slurmstepd: error: Job 18619118 exceeded memory limit (614976 > 524288), being killed
+slurmstepd: error: Exceeded job memory limit
+slurmstepd: error: *** JOB 18619118 ON qcd12s0344 CANCELLED AT 2020-08-05T18:14:32 ***
