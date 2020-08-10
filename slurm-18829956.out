@@ -1,0 +1,41 @@
++-------------------------------------------------------------------------
+| COATJAVA LIBRARY DIRECTORY =  /group/clas12/packages/coatjava/6.5.3/bin/..//lib/clas/
++-------------------------------------------------------------------------
+ 
+ 
+*****************************************
+*    Running COAT-JAVA Groovy Scripts   *
+*    Version : 3a  Release : 2016       *
+*****************************************
+ 
+ 
+[SystemFonts] ---> set size = 25, available 2
+reader:: *****>>>>> openning file : /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005038.hipo
+reader:: ***** dictionary entries :          135
+reader:: ************ file size   :  20899891076
+reader:: **** scan trailer #bytes :       119928
+reader:: ***** number of  records :         3747
+reader:: ***** number of  events  :      8934140
+[DataSourceDump] --> opened file with events # 
+Skipped 1988 events from /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005038.hipo
+reader:: *****>>>>> openning file : /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005249.hipo
+reader:: ***** dictionary entries :          135
+reader:: ************ file size   :  23537616160
+reader:: **** scan trailer #bytes :       142744
+reader:: ***** number of  records :         4460
+reader:: ***** number of  events  :      9335803
+[DataSourceDump] --> opened file with events # 
+Skipped 2123 events from /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005249.hipo
+reader:: *****>>>>> openning file : /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005248.hipo
+reader:: ***** dictionary entries :          135
+reader:: ************ file size   :  23437016452
+reader:: **** scan trailer #bytes :       142232
+reader:: ***** number of  records :         4444
+reader:: ***** number of  events  :      9311516
+[DataSourceDump] --> opened file with events # 
+Skipped 2069 events from /cache/clas12/rg-a/production/recon/fall2018/torus-1/pass1/v0/dst/train/skim4/skim4_005248.hipo
+Info in <TCanvas::Print>: pdf file hists/new/out2D_ThetaP_6.pdf has been created
+Info in <TCanvas::Print>: pdf file hists/new/out2D_ThetaP_total.pdf has been created
+Info in <TCanvas::Print>: pdf file hists/new/out2D_PhiP_6.pdf has been created
+Info in <TCanvas::Print>: pdf file hists/new/out2D_PhiP_total.pdf has been created
+Info in <TCanvas::Print>: pdf file hists/new/out_ThetaPhi.pdf has been created
