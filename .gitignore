@@ -1,2 +1,16 @@
 *~
 .idea
+.gitignore
+event
+examples
+exclusive
+mon
+my
+pid
+projects
+run
+utils
+hists.root
+print.sh
+slurm-*
+
